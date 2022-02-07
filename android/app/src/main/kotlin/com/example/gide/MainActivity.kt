@@ -1,4 +1,4 @@
-package 
+package io.nastalgua.gide
 
 import io.flutter.embedding.android.FlutterActivity
 
