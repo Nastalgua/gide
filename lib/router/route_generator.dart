@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gide/core/constants/route_constants.dart';
 
 // UIs
-import 'package:gide/screens/home.dart';
+import 'package:gide/screens/old_home.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -14,7 +14,8 @@ class RouteGenerator {
         return MaterialPageRoute(
             builder: (_) => const Home(
                   key: Key("home_page"),
-                ));
+                )
+              );
       default:
         return _errorRoute();
     }

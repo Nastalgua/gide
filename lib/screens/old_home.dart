@@ -22,8 +22,6 @@ class _HomeState extends State<Home> {
   
   void initState() {
     super.initState();
-
-    
   }
 
   Widget _buildUserInfo(BuildContext context, User? user) {
