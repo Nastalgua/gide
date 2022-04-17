@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:gide/constants/route_constants.dart';
+import 'package:gide/core/constants/route_constants.dart';
 
 // UIs
-import 'package:gide/ui/home.dart';
+import 'package:gide/screens/home.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {

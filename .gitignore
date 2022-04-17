@@ -1,3 +1,6 @@
+.env
+.vscode
+
 # Firebase
 android/app/google-services.json
 
