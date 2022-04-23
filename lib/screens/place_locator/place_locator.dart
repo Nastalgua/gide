@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gide/screens/place_locator/filter_item.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -16,6 +17,19 @@ class _PlaceLocatorState extends State<PlaceLocator> {
   LatLng _initialcameraposition = LatLng(20.5937, 78.9629);
   Location _location = Location();
 
+  Widget _buildFilters() {
+    return SizedBox(
+      height: 40,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: const [
+          FilterItem(name: "Interests"),
+          FilterItem(name: "Surprise Me!"),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTextField() {
     return TextField(
       decoration: InputDecoration(
@@ -31,37 +45,32 @@ class _PlaceLocatorState extends State<PlaceLocator> {
         hintStyle: const TextStyle(color: Color(0xFFC2C2C2)),
         suffixIcon: const Icon(Icons.search, color: Color(0xFF3D3D3D)),
         filled: true,
+        fillColor: Colors.white
       ),
     );
   }
 
-  PreferredSize? _buildAppBar() {
-    return PreferredSize(
-      preferredSize: Size.fromHeight(140),
-      child: AppBar(
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF7E7E7E)),
-          onPressed: () {},
-          //onPressed: () => Navigator.of(context).pop(),
-        ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            color: Color(0xFFF6F6F6)
-          ),
-        ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(50),
-          child: Container(
-            alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildTextField()
-              ],
-            ),
+  Widget _buildAppBar() {
+    return Positioned(
+      top: 15,
+      right: 15,
+      left: 15,
+      child: SafeArea(
+        child: Container(
+          decoration: BoxDecoration(color: const Color(0xFFF6F6F6), borderRadius: BorderRadius.circular(8)),
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              IconButton(
+                splashColor: Colors.grey,
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {},
+              ),
+              _buildTextField(),
+              _buildFilters()
+            ],
           ),
         ),
       ),
@@ -80,18 +89,20 @@ class _PlaceLocatorState extends State<PlaceLocator> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(),
+      resizeToAvoidBottomInset: false,
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         child: Stack(
           children: [
             GoogleMap(
-                initialCameraPosition: CameraPosition(target: _initialcameraposition),
-                mapType: MapType.normal,
-                onMapCreated: _onMapCreated,
-                myLocationEnabled: true,
-                zoomGesturesEnabled: true)
+              initialCameraPosition: CameraPosition(target: _initialcameraposition),
+              mapType: MapType.normal,
+              onMapCreated: _onMapCreated,
+              myLocationEnabled: true,
+              zoomGesturesEnabled: true,
+            ),
+            _buildAppBar(),
           ],
         ),
       ),
