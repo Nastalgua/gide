@@ -4,6 +4,7 @@ import 'package:gide/core/constants/route_constants.dart';
 
 // UIs
 import 'package:gide/screens/old_home.dart';
+import 'package:gide/screens/place_locator/place_locator.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -14,8 +15,9 @@ class RouteGenerator {
         return MaterialPageRoute(
             builder: (_) => const Home(
                   key: Key("home_page"),
-                )
-              );
+                ));
+      case placeLocatorViewRoute:
+        return MaterialPageRoute(builder: (_) => const PlaceLocator());
       default:
         return _errorRoute();
     }

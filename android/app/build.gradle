@@ -25,6 +25,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+apply from: project(':flutter_config').projectDir.getPath() + "/dotenv.gradle"
 
 android {
     compileSdkVersion flutter.compileSdkVersion
@@ -50,6 +51,9 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        manifestPlaceholders = [
+            google_maps_api_key: "$System.env.GOOGLE_MAPS_API_KEY"
+        ]
     }
 
     buildTypes {
