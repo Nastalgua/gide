@@ -10,17 +10,14 @@ import 'package:gide/screens/auth/bloc/auth_bloc.dart';
 import 'package:gide/core/constants/colors_constants.dart';
 import 'package:gide/core/constants/route_constants.dart';
 import 'package:gide/router/route_generator.dart';
+import 'package:gide/screens/auth/page/login_page.dart';
+
+import 'package:flutter_config/flutter_config.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await dotenv.load(fileName: "assets/.env");
-
-  /*
-  final firebaseAPIKey = dotenv.env['FIREBASE_API_KEY'];
-  final firebaseAppId = dotenv.env['FIREBASE_APP_ID'];
-  final firebaseMessagingSenderId = dotenv.env['FIREBASE_MESSAGING_SENDER_ID'];
-  */
+  await FlutterConfig.loadEnvVariables();
 
   if (Firebase.apps.isEmpty) {
     await Firebase.initializeApp();

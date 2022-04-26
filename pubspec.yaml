@@ -31,6 +31,7 @@ dependencies:
     sdk: flutter
   
   flutter_dotenv: ^5.0.2
+  flutter_config: ^2.0.0
 
   # App state
   flutter_bloc: ^8.0.1

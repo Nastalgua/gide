@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:gide/core/constants/route_constants.dart';
 
 // UIs
-import 'package:gide/screens/old_home.dart';
+import 'package:gide/screens/home/home.dart';
+import 'package:gide/screens/auth/page/login_page.dart';
+
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -15,7 +17,11 @@ class RouteGenerator {
             builder: (_) => const Home(
                   key: Key("home_page"),
                 )
-              );
+            
+            //LoginPage()
+            
+            
+            );
       default:
         return _errorRoute();
     }
