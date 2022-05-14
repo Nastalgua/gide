@@ -44,6 +44,7 @@ dependencies:
   firebase_auth: ^3.3.11
   google_sign_in: ^5.0.4
   cloud_firestore: ^3.1.10
+  google_fonts: ^2.3.2
 
   # Google maps
   google_maps_flutter: ^2.1.3
