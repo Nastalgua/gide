@@ -5,6 +5,8 @@ import 'package:gide/core/constants/route_constants.dart';
 // UIs
 import 'package:gide/screens/home/home.dart';
 import 'package:gide/screens/auth/page/login_page.dart';
+import 'package:gide/screens/auth/page/sign_up_page.dart';
+import 'package:gide/screens/auth/page/favorites.dart';
 
 
 class RouteGenerator {
@@ -14,12 +16,15 @@ class RouteGenerator {
     switch (settings.name) {
       case homeViewRoute:
         return MaterialPageRoute(
-            builder: (_) => const Home(
-                  key: Key("home_page"),
-                )
+            builder: (_) => FavoritesPage()
+            
+            //SignUpPage()
             
             //LoginPage()
             
+            // const Home(
+            //        key: Key("home_page"),
+            //      )
             
             );
       default:
