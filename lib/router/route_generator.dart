@@ -8,6 +8,7 @@ import 'package:gide/screens/home/home.dart';
 import 'package:gide/screens/auth/page/login_page.dart';
 import 'package:gide/screens/auth/page/sign_up_page.dart';
 import 'package:gide/screens/auth/page/favorites.dart';
+import 'package:gide/screens/auth/page/profile.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -27,6 +28,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const LoginPage());
       case favoritesRoute:
         return MaterialPageRoute(builder: (_) => const FavoritesPage());
+      case profileRoute:
+        return MaterialPageRoute(builder: (_) => const ProfilePage());
       default:
         return _errorRoute();
     }

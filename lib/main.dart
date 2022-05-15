@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Gide',
-      initialRoute: placeLocatorViewRoute,
+      initialRoute: profileRoute,
       onGenerateRoute: RouteGenerator.generateRoute,
       darkTheme: ThemeData(scaffoldBackgroundColor: mainBackgroundColor),
     );

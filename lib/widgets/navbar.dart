@@ -7,6 +7,7 @@ class navBar extends StatelessWidget {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Container(
+      
       height: height * .11,
       width: width,
       color: Color.fromARGB(255, 255, 254, 254).withOpacity(0),
