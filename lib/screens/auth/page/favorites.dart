@@ -44,7 +44,7 @@ class FavoritesPage extends StatelessWidget{
         alignment: Alignment.centerLeft,
         child: Padding(
           padding: EdgeInsets.only(top: height * .055),
-          child: Text(
+          child: const Text(
             'Favorites',
             style: TextStyle(
               fontSize: 19,
@@ -67,12 +67,15 @@ class FavoritesPage extends StatelessWidget{
           height: height * .14125,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            color: Color(0xFFFFFFFF)
+            color: const Color(0xFFFFFFFF)
           ),
           child: ElevatedButton(
             onPressed: () {},
+            
             style: ElevatedButton.styleFrom(
-              primary: Color(0xFFFFFFFF),
+              elevation: 0.0,
+              shadowColor: Colors.transparent,
+              primary: const Color(0xFFFFFFFF),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 )
@@ -91,7 +94,7 @@ class FavoritesPage extends StatelessWidget{
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16), // Image border
                           child: SizedBox.fromSize(
-                            size: Size.fromRadius(46), // Image radius
+                            size: const Size.fromRadius(46), // Image radius
                             child: Image.network('https://flutter.github.io/assets-for-api-docs/assets/widgets/owl-2.jpg', fit: BoxFit.cover),
                           ),
                         )
@@ -102,7 +105,7 @@ class FavoritesPage extends StatelessWidget{
                         width: width * .075,
                         child:Column(
                           children: [
-                            Align(
+                            const Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 "TEST",
@@ -114,25 +117,29 @@ class FavoritesPage extends StatelessWidget{
                               ),
                             ),
                             
-                            Flexible(
-                              child: SizedBox(
-                                child: Text(
-                                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    color: Color(0xFF838383),
-                                    fontSize: 11
-                                  ),
-                                  // overflow: TextOverflow.ellipsis,
-                                  // maxLines: 1,
-                                  // softWrap: false,
+                            Padding(
+                              padding: EdgeInsets.only(top: height * .005,bottom: height * .031),
+                              child: Flexible(
+                                child: SizedBox(
+                                  height: height * .14125 * .25,
+                                  child: const Text(
+                                    "All of our menu items are inspired by _____ cuisine and have been created by our head chef, (CN), after studying authentic _____ cuisine in ____. Not only do we have fresh flown-in seafood from the northeast, but we also have a variety of handcrafted cocktails, wine, and beer to choose from.",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xFF838383),
+                                      fontSize: 11
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
+                                    softWrap: false,
+                                  )
                                 )
-                              )
+                              ),
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Text(
+                                const Text(
                                   'Learn More ',
                                   style: TextStyle(
                                         fontSize: 10,
