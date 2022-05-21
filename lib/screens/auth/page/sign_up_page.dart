@@ -66,7 +66,7 @@ class _SignUpPageState extends State<SignUpPage> {
         Padding(
           padding: EdgeInsets.only(top: height * 0.01125),
           child: const Text(
-            'Create an account here',
+            'Create an account here!',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w400

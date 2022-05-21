@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gide/core/base.dart';
 
 import 'package:gide/core/constants/route_constants.dart';
 
@@ -17,7 +18,7 @@ class RouteGenerator {
     switch (settings.name) {
       case homeViewRoute:
         return MaterialPageRoute(
-            builder: (_) => const Home(
+            builder: (_) => const Base(
                   key: Key("home_page"),
                 ));
       case placeLocatorViewRoute:

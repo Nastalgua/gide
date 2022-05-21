@@ -27,16 +27,6 @@ class _HomeState extends State<Home> {
   final Color _disableColor = Colors.black45;
 
   @override
-  void initState() {
-    super.initState();
-    
-    if (AuthenticationService.getCurrentUser() == null) {
-      Navigator.of(context).pushNamed(loginRoute);
-      return;
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _createHomePage(),
@@ -182,7 +172,10 @@ class YellowScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.yellow
+      color: Colors.yellow,
+      child: IconButton(icon: Icon(Icons.logout), onPressed: () {
+        AuthenticationService.firebaseLogout();
+      },),
     );
   }
 }
