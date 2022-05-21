@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gide/screens/place_locator/filter_item.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
+import 'package:google_place/google_place.dart' as GooglePlace;
+import 'package:location/location.dart' as Loc;
 
 class PlaceLocator extends StatefulWidget {
   const PlaceLocator({Key? key}) : super(key: key);
@@ -15,7 +16,18 @@ class _PlaceLocatorState extends State<PlaceLocator> {
   late GoogleMapController _controller;
 
   LatLng _initialcameraposition = LatLng(20.5937, 78.9629);
-  Location _location = Location();
+  Loc.Location _location = Loc.Location();
+
+  var lng, lat;
+
+  bool _searched = false;
+
+  @override
+  initState() {
+    super.initState();
+    _searched = false;
+    getLocation();
+  }
 
   Widget _buildFilters() {
     return SizedBox(
@@ -66,7 +78,9 @@ class _PlaceLocatorState extends State<PlaceLocator> {
               IconButton(
                 splashColor: Colors.grey,
                 icon: const Icon(Icons.arrow_back),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
               ),
               _buildTextField(),
               _buildFilters()
@@ -81,8 +95,18 @@ class _PlaceLocatorState extends State<PlaceLocator> {
     _controller = controller;
 
     _location.onLocationChanged.listen((loc) {
-      _controller.animateCamera(
-          CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(loc.latitude!, loc.longitude!), zoom: 15)));
+      
+    });
+  }
+
+  Future getLocation() async {
+    final location = Loc.Location();
+    var currentLocation = await location.getLocation();
+
+    setState(() {
+      lat = currentLocation.latitude;
+      lng = currentLocation.longitude;
+      _searched = true;
     });
   }
 
@@ -95,12 +119,15 @@ class _PlaceLocatorState extends State<PlaceLocator> {
         width: MediaQuery.of(context).size.width,
         child: Stack(
           children: [
-            GoogleMap(
-              initialCameraPosition: CameraPosition(target: _initialcameraposition),
+            (lat == null || lng == null) ? 
+            Container() : GoogleMap(
+              initialCameraPosition: CameraPosition(target: LatLng(lat, lng), zoom: 15),
               mapType: MapType.normal,
               onMapCreated: _onMapCreated,
               myLocationEnabled: true,
               zoomGesturesEnabled: true,
+              myLocationButtonEnabled: false,
+              zoomControlsEnabled: false
             ),
             _buildAppBar(),
           ],

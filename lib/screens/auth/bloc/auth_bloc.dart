@@ -1,15 +1,15 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:gide/core/models/user_model.dart' as self_module;
 import 'package:gide/core/services/auth_service.dart';
-import 'package:google_sign_in/google_sign_in.dart' as google_module;
 
 part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final googleSignIn = google_module.GoogleSignIn();
+  final auth = FirebaseAuth.instance;
 
   AuthBloc() : super(AuthInitial()) {
     /*
@@ -34,8 +34,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // await FirebaseAuth.instance.authStateChanges
       User? resUser = AuthenticationService.getCurrentUser();
 
-      print(resUser);
-
       if (resUser != null) {
         self_module.User user = self_module.User(
           id: resUser.uid,
@@ -49,7 +47,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<LoginUser>((event, emit) async {
       if (state is AuthConfirmed) return;
-      // print("${event.username} ${event.password}");
+      User? res = await AuthenticationService.loginWithEmailAndPassword(event.email, event.password);
+
+      if (res == null) return;
+
+      self_module.User user = self_module.User(
+        id: res.uid,
+        fullName: res.displayName ?? "",
+        username: res.displayName ?? ""
+      );
+
+      emit(AuthConfirmed(user: user));
+    });
+
+    on<RegisterUser>((event, emit) async {
+      if (state is AuthConfirmed) return;
+      User? res = await AuthenticationService.registerWithEmailAndPassword(event.email, event.password, event.username);
+
+      if (res == null) return;
+
+      self_module.User user = self_module.User(
+        id: res.uid,
+        fullName: res.displayName ?? "",
+        username: res.displayName ?? ""
+      );
+
+      emit(AuthConfirmed(user: user));
     });
 
     on<GoogleLoginUser>((event, emit) async {

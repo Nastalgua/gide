@@ -8,8 +8,10 @@ class ProfilePage extends StatelessWidget{
   Widget build(BuildContext context){
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    
     return Scaffold(
       body: Material(
+        color:Color(0xFFF6F6F6),
         child: Stack(
           children: [
             Container(
@@ -26,12 +28,6 @@ class ProfilePage extends StatelessWidget{
                 ),
               ),
             ),
-      
-            Positioned(
-              bottom: 0,
-              left: 0,
-              child: navBar()
-            )
           ],
         ),
       ),

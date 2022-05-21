@@ -8,43 +8,35 @@ class FavoritesPage extends StatelessWidget{
   Widget build(BuildContext context){
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      
       body: Material(
         color:Color(0xFFF6F6F6),
-        child: Stack(
-          children: [
-             Padding(
-              padding: EdgeInsets.only(left: width * .077),
-              child: Column(
-                children: [
-                  favorites(height, width)
-                ],
-              )
-            ),
-            
-             Positioned(
-                bottom: 0,
-                left: 0,
-                child: navBar()
-              )
-            
-          ],
+        child: SafeArea(
+          child: Stack(
+            children: [
+               Padding(
+                padding: EdgeInsets.only(left: width * .077),
+                child: Column(
+                  children: [
+                    favorites(height, width)
+                  ],
+                )
+              ),   
+            ],
+          ),
         )
            
         )
     );
-    
-      
-  
   }
 
   Widget favoriteText(double height, double width){
-    return Align(
+    return const Align(
         alignment: Alignment.centerLeft,
         child: Padding(
-          padding: EdgeInsets.only(top: height * .055),
-          child: const Text(
+          padding: EdgeInsets.only(top: 0),
+          child: Text(
             'Favorites',
             style: TextStyle(
               fontSize: 19,
@@ -174,13 +166,12 @@ class FavoritesPage extends StatelessWidget{
       body: Center(
         child: NotificationListener<OverscrollIndicatorNotification>(
           onNotification: (OverscrollIndicatorNotification overScroll) {
-            overScroll.disallowGlow();
             return false;
           },
           child: ListView.builder(
             
             padding: EdgeInsets.all(0),
-            itemCount: 10,
+            itemCount: 5,
             itemBuilder: (context, index) => favoriteTab("TEST", "TEST", height, width),
           )
         )

@@ -1,33 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gide/core/constants/route_constants.dart';
+import 'package:gide/screens/auth/bloc/auth_bloc.dart';
 
-class SignUpPage extends StatelessWidget {
-  const SignUpPage({ Key? key }) : super(key: key);
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({Key? key}) : super(key: key);
+
+  @override
+  _SignUpPageState createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
+  String _username = "", _email = "", _password = "";
 
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Material(
-      child:Container(
-        color: Color(0xFFF6F6F6),
-        child: Column(
-          children: [
-            buildText(height, width),
-            buildFields(height, width),
-            buildButtons(height, width),
-          ],
-        )
+      child: BlocListener<AuthBloc, AuthState>(
+        listener: ((context, state) {
+            if (state is AuthConfirmed) {
+              Navigator.of(context).pushNamed(homeViewRoute);
+            }
+          }
+        ),
+        child: BlocBuilder(
+          bloc: BlocProvider.of<AuthBloc>(context),
+          builder: (context, state) {
+            if (state is AuthConfirmed) return Container();
+            return SafeArea(
+              child: SingleChildScrollView(
+                child: Container(
+                  color: const Color(0xFFF6F6F6),
+                  child: Column(
+                    children: [
+                      buildText(height, width),
+                      buildFields(height, width),
+                      buildButtons(height, width),
+                    ],
+                  )
+                ),
+              ),
+            );
+          },
+        ),
       )
     );
   }
 
-  Widget buildText(double height, double width){
+  Widget buildText(double height, double width) {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.only(top: height * 0.06125),
-          child: Text(
+          padding: EdgeInsets.only(top: height * 0.02),
+          child: const Text(
             'Hello!',
             style: TextStyle(
               fontSize: 27,
@@ -37,7 +65,7 @@ class SignUpPage extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.only(top: height * 0.01125),
-          child: Text(
+          child: const Text(
             'Create an account here',
             style: TextStyle(
               fontSize: 18,
@@ -72,12 +100,16 @@ class SignUpPage extends StatelessWidget {
                 ),
                 
                 hintText: 'Enter email...',
-                hintStyle: TextStyle(
+                hintStyle: const TextStyle(
                   color: Color(0xFFC2C2C2),
                   fontSize: 14
                 ),
               ),
-              
+              onChanged: (value) {
+                setState(() {
+                  _email = value.trim();
+                });
+              },
             )
           )
           
@@ -101,12 +133,16 @@ class SignUpPage extends StatelessWidget {
                 ),
                 
                 hintText: 'Enter a username...',
-                hintStyle: TextStyle(
+                hintStyle: const TextStyle(
                   color: Color(0xFFC2C2C2),
                   fontSize: 14
                 ),
               ),
-              
+              onChanged: (value) {
+                setState(() {
+                  _username = value;
+                });
+              },
             )
           )
           
@@ -120,6 +156,7 @@ class SignUpPage extends StatelessWidget {
               color: Colors.white
             ),
             child: TextField(
+              obscureText: true,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderSide: const BorderSide(
@@ -130,12 +167,14 @@ class SignUpPage extends StatelessWidget {
                 ),
                 
                 hintText: 'Enter password...',
-                hintStyle: TextStyle(
+                hintStyle: const TextStyle(
                   color: Color(0xFFC2C2C2),
                   fontSize: 14
                 ),
               ),
-              
+              onChanged: (value) {
+                _password = value;
+              },
             )
           )
           
@@ -157,22 +196,23 @@ class SignUpPage extends StatelessWidget {
     
             ),
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                context.read<AuthBloc>().add(RegisterUser(email: _email, password: _password, username: _username));
+              },
               style: ElevatedButton.styleFrom(
-                primary: Color(0xFF4670C1),
+                primary: const Color(0xFF4670C1),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 )
               ),
               
-              child: Text(
+              child: const Text(
                 'Register',
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
                   fontSize: 15
                 )
-              )
-              ,
+              ),
             )
           )
         ),
@@ -184,16 +224,17 @@ class SignUpPage extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
+              const Text(
                 'Already a member? ',
-                
               ),
               GestureDetector(
-                child: Text(
-                  'Login',
+                child: const Text(
+                  'Login here',
                   style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue)
                 ),
-                onTap: () async {}
+                onTap: () async {
+                  Navigator.of(context).pop();
+                }
               )
               
             ],
@@ -220,7 +261,7 @@ class SignUpPage extends StatelessWidget {
               ),
             ),
             
-            Text(
+            const Text(
               'Or continue with',
               style: TextStyle(
                     color: Color(0xFFC2C2C2),
@@ -254,11 +295,13 @@ class SignUpPage extends StatelessWidget {
     
             ),
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                context.read<AuthBloc>().add(GoogleLoginUser());
+              },
               style: ElevatedButton.styleFrom(
-                primary: Color(0xFFF6F6F6),
+                primary: const Color(0xFFF6F6F6),
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(
+                  side: const BorderSide(
                     color: Color(0xFFC2C2C2),
                     width: 1.1736824632845932
                   ),
