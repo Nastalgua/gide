@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gide/widgets/navbar.dart';
@@ -16,13 +17,14 @@ class FavoritesPage extends StatelessWidget{
           child: Stack(
             children: [
                Padding(
-                padding: EdgeInsets.only(left: width * .077),
+                padding: EdgeInsets.only(left: width * .077, right: width  *.077 ),
                 child: Column(
                   children: [
                     favorites(height, width)
                   ],
                 )
               ),   
+              
             ],
           ),
         )
@@ -50,113 +52,105 @@ class FavoritesPage extends StatelessWidget{
   }
 
   Widget favoriteTab(String name, String desc, double height, double width){
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: EdgeInsets.only(top: height * .03),
+    return Padding(
+      padding: EdgeInsets.only(top: height * .015),
+      child: ElevatedButton(
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+          elevation: 0,
+          shadowColor: Colors.transparent,
+          primary: const Color(0xFFFFFFFF),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(11)
+          )
+        ),
         child: Container(
-          width: width * .844,
           height: height * .14125,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: const Color(0xFFFFFFFF)
+            borderRadius: BorderRadius.circular(11),
+            color: Color(0xFFFFFFFF)
           ),
-          child: ElevatedButton(
-            onPressed: () {},
-            
-            style: ElevatedButton.styleFrom(
-              elevation: 0.0,
-              shadowColor: Colors.transparent,
-              primary: const Color(0xFFFFFFFF),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                )
-            ),
-            child: Padding(
-              padding: EdgeInsets.only(top: height * .015, bottom: height * .015),
-              child: Row(
-                children: [
-                  Padding(
-                      padding: EdgeInsets.only(left: width * .00125, right: width * .02,),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16), // Image border
-                          child: SizedBox.fromSize(
-                            size: const Size.fromRadius(46), // Image radius
-                            child: Image.network('https://flutter.github.io/assets-for-api-docs/assets/widgets/owl-2.jpg', fit: BoxFit.cover),
-                          ),
-                        )
-                      )
-                    ),
-                    Expanded(
-                      child: Container(
-                        width: width * .075,
-                        child:Column(
-                          children: [
-                            const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "TEST",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 13,
-                                  color: Colors.black
-                                )
-                              ),
-                            ),
-                            
-                            Padding(
-                              padding: EdgeInsets.only(top: height * .005,bottom: height * .031),
-                              child: Flexible(
-                                child: SizedBox(
-                                  height: height * .14125 * .25,
-                                  child: const Text(
-                                    "All of our menu items are inspired by _____ cuisine and have been created by our head chef, (CN), after studying authentic _____ cuisine in ____. Not only do we have fresh flown-in seafood from the northeast, but we also have a variety of handcrafted cocktails, wine, and beer to choose from.",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Color(0xFF838383),
-                                      fontSize: 11
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                    softWrap: false,
-                                  )
-                                )
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                const Text(
-                                  'Learn More ',
-                                  style: TextStyle(
-                                        fontSize: 10,
-                                        color: Color(0xFF4670C1),
-                                        fontFamily: 'Poppins'
-                                  )
-                                ),
-                                SvgPicture.asset(
-                                  'assets/icons/Arrow 1.svg',
-                                  height: height * .01,
-                                  width: width * .01
-                                )
-                              
-                              ],
-                            )
-                          ],
-                        ),
-                      )
-                    )
-                ],
+          child: Row(
+            //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                height: height * .09875,
+                width: width * .25,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(11),
+                  image: const DecorationImage(
+                    image:  AssetImage('assets/images/noodles.png'),
+                    fit: BoxFit.cover
+                  )
+                ),
               ),
-            )
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(left: width * .03, right: width * .03 ),
+                  child: Container(
+                    height: height * .09875,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Align(
+                          alignment: Alignment.centerLeft,
+                          child: const Text(
+                            "TEST",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 13,
+                              color: Colors.black
+                            )
+                          ),
+                        ),
+                        const Align(
+                          alignment: Alignment.centerLeft,
+                          child: const Text(
+                            "All of our menu items are inspired by _____ cuisine and have been created by our head chef, (CN), after studying authentic _____ cuisine in ____. Not only do we have fresh flown-in seafood from the northeast, but we also have a variety of handcrafted cocktails, wine, and beer to choose from.",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xFF838383),
+                              fontSize: 9
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 3,
+                            softWrap: false,
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                            const Text(
+                              'Learn More ',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Color(0xFF4670C1),
+                                fontFamily: 'Poppins'
+                                )
+                            ),
+                            SvgPicture.asset(
+                              'assets/icons/Arrow 1.svg',
+                              height: height * .01,
+                              width: width * .01
+                            )
+                                
+                          ],
+                                              ),
+                        )
+                                  
+                      ],
+                    )
+                  ),
+                ),
+              )
+              
+              
+            ],
           )
         )
-      )
+      ),
     );
   }
 
