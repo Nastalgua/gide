@@ -65,7 +65,6 @@ class ProfilePage extends StatelessWidget{
               bottom,
               style: TextStyle(
                 fontSize: 11
-              
               )
             )
           ],
@@ -88,7 +87,6 @@ class ProfilePage extends StatelessWidget{
           padding: EdgeInsets.all(width * .067),
           child: Column(
             children: [
-              //pfp + name + user
               Row(
                 children: [
                   Padding(
