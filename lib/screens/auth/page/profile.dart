@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gide/widgets/navbar.dart';
@@ -16,17 +17,20 @@ class ProfilePage extends StatelessWidget{
           children: [
             Container(
               height: height,
-              child: Padding(
-                padding: EdgeInsets.only(left: width * .076, top: height * .055),
-                child: Column(
-                  children: [
-                    textAndIcon(height, width, 'Account', 'Edit and manage your account details.', 'assets/icons/profile/settings.svg'),
-                    profileBox(height, width, 'TESTING', 'TESTING', '123-0213-1023', 'testing@gmail.com'),
-                    textAndIcon(height, width, 'About Us', 'Learn more about Gide.', 'assets/icons/profile/info.svg'),
-                    aboutUsBox(height, width)
-                  ],
+              child: Center(
+                  child: Container(
+                    width: width * .844,
+                    child: Column(
+                      children: [
+                        textAndIcon(true, height, width, 'Account', 'Edit and manage your account details', 'assets/icons/profile/settings.svg'),
+                        profileBox(height, width, 'hi', 'hi', '123-1231-1231', "testing123@gmail.com"),
+                        textAndIcon(false, height, width, 'About Us', 'Learn more about Gide', 'assets/icons/profile/info.svg'),
+                        aboutUsBox(height, width)
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              
             ),
           ],
         ),
@@ -34,274 +38,299 @@ class ProfilePage extends StatelessWidget{
     );
   }
 
-  Widget textAndIcon(double height, double width, String top, String bottom, String icon){
-    return Row(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(right: width * .02, top: height * .02, bottom: height * .02),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Color(0xFF4670C1),
-              borderRadius: BorderRadius.circular(8)
-            ),
-            height: width * .08,
-            width: width * .08,
-            child: Padding(
-              padding: EdgeInsets.all(width * .02),
-              child: SvgPicture.asset(icon),
-            )
-          )
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+  Widget textAndIcon(bool topArea, double height, double width, String top, String bottom, String icon){
+    return SafeArea(
+      top: topArea,
+      child: Container(
+        height: height * .09875,
+        child: Center(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                top,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600
+              Container(
+                height: width * .09,
+                width: width * .09,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(11),
+                  color: Color(0xFF4670C1),
                 ),
+                child: SvgPicture.asset(
+                    icon,
+                    fit: BoxFit.scaleDown
+                  ),
               ),
-              Text(
-                bottom,
-                style: const TextStyle(
-                  fontSize: 10,
-                  color: Color(0xFF838383),
-                )
+              Container(
+                width: width * .5694,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    width: width * .538,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              top
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              bottom,
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Color(0xFF838383),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                  ),
+                ),
+                
               )
+              
             ],
-          ),
+          )
         )
-      ],
+      )
     );
   }
 
   Widget profileBox(double height, double width, String user, String name, String phoneNumber, String email){
-    return Align(
-      alignment: Alignment.centerLeft,
+    return Flexible(
       child: Container(
-        width:  width * .844,
-        height: height * .349,
+        height: height * .35,
+        width: width * .844,
         decoration: BoxDecoration(
-          color: const Color(0xFFFFFFFF),
-           borderRadius: BorderRadius.circular(8)
+          color: Color(0xFFFFFFFF),
+          borderRadius: BorderRadius.circular(11)
         ),
-        child: Padding(
-            padding: EdgeInsets.only(top: width * .067, left: width * .067, right: width * .067),
+        child: Center(
+          child: Container(
+            height: height* .3,
+            
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(right: width * .04),
-                      child: Container(
-                        height: width * .133,
-                        width: width * .133,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(11)
-                        ),
-                        child: const Image(
-                          image: AssetImage('assets/images/noodles.png'),
-                          fit: BoxFit.cover  
+                //pic user and name
+                Container(
+                  height: height *.08,
+                  width: width * .7556,
+                  child: Row(
+                    children: [
+                      Container(
+                        height: height* .07125,
+                        width: height * .07125,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(11),
+                          child: Image.asset(
+                                'assets/images/noodles.png',
+                                fit: BoxFit.fill
+                              ),
                         )
-                      )
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(bottom: height * .005),
-                          child: Text(
-                            name,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
+                          
+                      ),
+                      SizedBox(
+                        width: width * .01125
+                      ),
+                      Container(
+                        
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                ' ' + name,
+                                style: TextStyle(
+                                  fontSize: 16
+                                )
+                              ),
+                            ),
+                            Text(
+                              ' @' + user,
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Color(0xFF838383)
+                              )
                             )
-                          ),
+                          ],
                         ),
-                        Text(
-                          '@' + user,
-                          style: const TextStyle(
-                            fontSize: 9,
-                            color: Color(0xFF838383),
-                          )  
-                        )
-                      ],
-                    )
-                  ],
+                      )
+                    ],
+                  ),
+
+                  
                 ),
-                //qrcode
-                Padding(
-                  padding: EdgeInsets.only(top: width * .0175, bottom: width * .0175),
+
+                Container(
+                  height: height * .05,
+                  width: width * .7556,
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: width * .02, right: width * .04 ),
-                        child: Container(
-                          height: width * .0667,
-                          width: width * .0667,
-                          child: SvgPicture.asset('assets/icons/profile/qrcode.svg')
-                        )
+                      Container(
+                       child: SvgPicture.asset('assets/icons/profile/qrcode.svg')
+
                       ),
-                      const Text(
-                        'QR CODE',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 13
-                        )
-                      ),
+                      Text(
+                        '   QR Code'
+                      )
                     ],
-                  ),
+                  )
                 ),
-          
-                const Divider(
+
+                Divider(
                   height: 1,
                   thickness: 1,
+                  indent: width * .0444,
+                  endIndent: width * .0444,
                 ),
-          
-                Padding(
-                  padding: EdgeInsets.only(left: width * .02, top: height * .0168, bottom: height * .0168),
+
+                Container(
+                  width: width * .7556,
                   child: Column(
                     children: [
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Email',
+                         'Email',
                           style: TextStyle(
-                            fontSize: 9,
-                            color: Color(0xFF838383),
-                          ),
+                            fontSize: 11,
+                            color: Color(0xFF838383)
+                          )
                         ),
                       ),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          email,
+                         email,
                           style: TextStyle(
-                            fontSize: 11
+                            fontSize: 13,
+                            
                           )
-                        )
-                      ),
+                        ),
+                      )
                     ],
                   ),
                 ),
-                
-          
-                const Divider(
+
+                Divider(
                   height: 1,
                   thickness: 1,
-                ),
-          
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(left: width * .02, top: height * .0168),
-                    child: Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Phone Number',
-                            style: TextStyle(
-                              fontSize: 9,
-                              color: Color(0xFF838383),
-                            ),
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            phoneNumber,
-                            style: TextStyle(
-                              fontSize: 11
-                            )
-                          )
-                        ),
-                      ],
-                    ),
-                  ),
+                  indent: width * .0444,
+                  endIndent: width * .0444,
                 ),
                 
+                Container(
+                  width: width * .7556,
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                         'Phone Number',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Color(0xFF838383)
+                          )
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          phoneNumber,
+                          style: TextStyle(
+                            fontSize: 13,
+                            
+                          )
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+
+            
               ],
             ),
-          )
-        
+          ),
+        )
       ),
     );
   }
 
   Widget aboutUsBox(double height, double width){
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Container(
-        width:  width * .844,
-        height: height * .1357,
-        decoration: BoxDecoration(
-          color: Color(0xFFFFFFFF),
-           borderRadius: BorderRadius.circular(8)
-        ),
-        child: Padding(
-          padding: EdgeInsets.only(left: width * .067, right: width * .067),
+    return Container(
+      height: height * .1375,
+      width: width * .844,
+      decoration: BoxDecoration(
+        color: Color(0xFFFFFFFF),
+        borderRadius: BorderRadius.circular(11),
+      ),
+      child: Center(
+        child: Container(
+          width: width * 7556,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               
-              //pfp + name + user
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+              Container(
+                width: width * .73,
+                height: height * .028,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                      children: [
+                        Container(
+                        height: height * .0285,
+                        child: Center(child: SvgPicture.asset('assets/icons/profile/question.svg'))
+                        ),
+                        Text(
+                          'Help',
+                          style: TextStyle(
+                            fontSize: 14
+
+                          ),
+                        )
+                      ],
+                    ),
                   
-                  children: [
-                    
-                    Padding(
-                      padding: EdgeInsets.only(right: width * .005),
-                      child: Container(
-                        height: width * .04,
-                        width: width * .04,
-                        child: SvgPicture.asset('assets/icons/profile/question.svg')
-                      ),
-                    ),
-                    Text(
-                      'Help',
-                      style: TextStyle(
-                        fontSize: 12
-                      ),
-                    ),
-                  ],
                 ),
               ),
-              const Divider(
-                  height: 1,
-                  thickness: 1,
+              Divider(
+                height: 1,
+                thickness: 1,
+                indent: width * .0444,
+                endIndent: width * .0444,
               ),
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    
-                    Padding(
-                      padding: EdgeInsets.only(right: width * .01),
-                      child: Container(
-                        height: width * .04,
-                        width: width * .04,
-                        child: SvgPicture.asset('assets/icons/profile/heart.svg')
-                      ),
-                    ),
-              
-                    Text(
-                      'Acknowledgements',
-                      style: TextStyle(
-                        fontSize: 12
-                      ),
-                    ),
-              
-                  ],
+              Container(
+                width: width * .73,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                      children: [
+                        Container(
+                          height: height * .0225,
+                          width: width * .0556,
+                          child: Center(child: SvgPicture.asset('assets/icons/profile/heart.svg'))
+                        ),
+                        Text(
+                          'Acknowledgements',
+                          style: TextStyle(
+                            fontSize: 14
+
+                          ),
+                        )
+                      ],
+                  ),
                 ),
               ),
             ],
-          )
-        )
-      ),
+          ),
+        ),
+      )
     );
   }
 }
