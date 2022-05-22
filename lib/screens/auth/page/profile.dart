@@ -52,22 +52,25 @@ class ProfilePage extends StatelessWidget{
             )
           )
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              top,
-              style: TextStyle(
-                fontWeight: FontWeight.w600
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                top,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600
+                ),
               ),
-            ),
-            Text(
-              bottom,
-              style: TextStyle(
-                fontSize: 11
+              Text(
+                bottom,
+                style: const TextStyle(
+                  fontSize: 10,
+                  color: Color(0xFF838383),
+                )
               )
-            )
-          ],
+            ],
+          ),
         )
       ],
     );
@@ -78,58 +81,151 @@ class ProfilePage extends StatelessWidget{
       alignment: Alignment.centerLeft,
       child: Container(
         width:  width * .844,
-        height: height * .358,
+        height: height * .349,
         decoration: BoxDecoration(
-          color: Color(0xFFFFFFFF),
+          color: const Color(0xFFFFFFFF),
            borderRadius: BorderRadius.circular(8)
         ),
         child: Padding(
-          padding: EdgeInsets.all(width * .067),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(right: width * .04),
-                    child: Container(
-                      height: width * .133,
-                      width: width * .133,
-                      child: SvgPicture.asset('assets/icons/navbar/person.svg')
+            padding: EdgeInsets.only(top: width * .067, left: width * .067, right: width * .067),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: width * .04),
+                      child: Container(
+                        height: width * .133,
+                        width: width * .133,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(11)
+                        ),
+                        child: const Image(
+                          image: AssetImage('assets/images/noodles.png'),
+                          fit: BoxFit.cover  
+                        )
+                      )
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(bottom: height * .005),
+                          child: Text(
+                            name,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                            )
+                          ),
+                        ),
+                        Text(
+                          '@' + user,
+                          style: const TextStyle(
+                            fontSize: 9,
+                            color: Color(0xFF838383),
+                          )  
+                        )
+                      ],
                     )
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  ],
+                ),
+                //qrcode
+                Padding(
+                  padding: EdgeInsets.only(top: width * .0175, bottom: width * .0175),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(name),
-                      Text(user)
+                      Padding(
+                        padding: EdgeInsets.only(left: width * .02, right: width * .04 ),
+                        child: Container(
+                          height: width * .0667,
+                          width: width * .0667,
+                          child: SvgPicture.asset('assets/icons/profile/qrcode.svg')
+                        )
+                      ),
+                      const Text(
+                        'QR CODE',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 13
+                        )
+                      ),
                     ],
-                  )
-                ],
-              ),
-              //qrcode
-              Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: width * .04, bottom: width * .04, right: width * .04 ),
-                    child: Container(
-                      height: width * .075,
-                      width: width * .075,
-                      child: SvgPicture.asset('assets/icons/profile/qrcode.svg')
-                    )
                   ),
-                  const Text(
-                    'QR CODE',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500
-                    )
+                ),
+          
+                const Divider(
+                  height: 1,
+                  thickness: 1,
+                ),
+          
+                Padding(
+                  padding: EdgeInsets.only(left: width * .02, top: height * .0168, bottom: height * .0168),
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Email',
+                          style: TextStyle(
+                            fontSize: 9,
+                            color: Color(0xFF838383),
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          email,
+                          style: TextStyle(
+                            fontSize: 11
+                          )
+                        )
+                      ),
+                    ],
                   ),
-                ],
-              ),
-
-              
-            ],
+                ),
+                
+          
+                const Divider(
+                  height: 1,
+                  thickness: 1,
+                ),
+          
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: width * .02, top: height * .0168),
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Phone Number',
+                            style: TextStyle(
+                              fontSize: 9,
+                              color: Color(0xFF838383),
+                            ),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            phoneNumber,
+                            style: TextStyle(
+                              fontSize: 11
+                            )
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                
+              ],
+            ),
           )
-        )
+        
       ),
     );
   }
@@ -145,15 +241,63 @@ class ProfilePage extends StatelessWidget{
            borderRadius: BorderRadius.circular(8)
         ),
         child: Padding(
-          padding: EdgeInsets.all(width * .067),
+          padding: EdgeInsets.only(left: width * .067, right: width * .067),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              
               //pfp + name + user
-              Row(
-                children: [
-    
-                ],
-              )
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  
+                  children: [
+                    
+                    Padding(
+                      padding: EdgeInsets.only(right: width * .005),
+                      child: Container(
+                        height: width * .04,
+                        width: width * .04,
+                        child: SvgPicture.asset('assets/icons/profile/question.svg')
+                      ),
+                    ),
+                    Text(
+                      'Help',
+                      style: TextStyle(
+                        fontSize: 12
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(
+                  height: 1,
+                  thickness: 1,
+              ),
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    
+                    Padding(
+                      padding: EdgeInsets.only(right: width * .01),
+                      child: Container(
+                        height: width * .04,
+                        width: width * .04,
+                        child: SvgPicture.asset('assets/icons/profile/heart.svg')
+                      ),
+                    ),
+              
+                    Text(
+                      'Acknowledgements',
+                      style: TextStyle(
+                        fontSize: 12
+                      ),
+                    ),
+              
+                  ],
+                ),
+              ),
             ],
           )
         )
