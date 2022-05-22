@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:gide/widgets/navbar.dart';
 
 class FavoritesPage extends StatelessWidget{
   const FavoritesPage({Key? key}) : super(key: key);
@@ -18,11 +17,7 @@ class FavoritesPage extends StatelessWidget{
             children: [
                Padding(
                 padding: EdgeInsets.only(left: width * .077, right: width  *.077 ),
-                child: Column(
-                  children: [
-                    favorites(height, width)
-                  ],
-                )
+                child: favorites(height, width)
               ),   
               
             ],
@@ -137,7 +132,7 @@ class FavoritesPage extends StatelessWidget{
                             )
                                 
                           ],
-                                              ),
+                          ),
                         )
                                   
                       ],
@@ -162,36 +157,43 @@ class FavoritesPage extends StatelessWidget{
           onNotification: (OverscrollIndicatorNotification overScroll) {
             return false;
           },
-          child: ListView.builder(
-            
-            padding: EdgeInsets.all(0),
-            itemCount: 5,
-            itemBuilder: (context, index) => favoriteTab("TEST", "TEST", height, width),
+          child: ScrollConfiguration(
+            behavior: MyBehavior(),
+            child: ListView.builder(
+              padding: EdgeInsets.all(0),
+              itemCount: 10,
+              itemBuilder: (context, index) => favoriteTab("TEST", "TEST", height, width),
+            ),
           )
         )
       )
     );
-  
-    
   }
 
   Widget favorites(double height, double width){
     return Container(
       height: height * .9039,
       width: width,
-      child: Column(
-        children: [
-          favoriteText(height, width),
-          Expanded(
-                child: favoriteList(height, width)
-              )
-        ],
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: Column(
+          children: [
+            favoriteText(height, width),
+            Expanded(
+              child: favoriteList(height, width)
+            )
+          ],
+        ),
       )
     );
-  }
-
-  
+  } 
 }
 
-
+class MyBehavior extends ScrollBehavior {
+  @override
+  Widget buildOverscrollIndicator(
+      BuildContext context, Widget child, ScrollableDetails details) {
+    return child;
+  }
+}
 

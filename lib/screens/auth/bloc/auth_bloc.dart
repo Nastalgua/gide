@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:gide/core/models/user_model.dart' as self_module;
 import 'package:gide/core/services/auth_service.dart';
 
@@ -37,11 +36,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (resUser != null) {
         self_module.User user = self_module.User(
           id: resUser.uid,
-          fullName: resUser.displayName!,
-          username: resUser.displayName! // TODO: this needs to change
+          username: resUser.displayName!, // TODO: this needs to change
+          credits: const [],
+          favoriteRestaurants: const []
         );
 
         emit(AuthConfirmed(user: user));
+      } else {
+        emit(AuthMissing());
       }
     });
 
@@ -53,8 +55,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       self_module.User user = self_module.User(
         id: res.uid,
-        fullName: res.displayName ?? "",
-        username: res.displayName ?? ""
+        username: res.displayName ?? "",
+        credits: const [],
+        favoriteRestaurants: const []
       );
 
       emit(AuthConfirmed(user: user));
@@ -68,8 +71,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       self_module.User user = self_module.User(
         id: res.uid,
-        fullName: res.displayName ?? "",
-        username: res.displayName ?? ""
+        username: res.displayName ?? "",
+        credits: const [],
+        favoriteRestaurants: const []
       );
 
       emit(AuthConfirmed(user: user));
@@ -83,16 +87,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       // TODO: Update global user data
       self_module.User user = self_module.User(
-        id: res.uid, fullName: res.displayName!, username: res.displayName! // TODO: this needs to change
+        id: res.uid, 
+        username: res.displayName!, // TODO: this needs to change
+        credits: const [],
+        favoriteRestaurants: const []
       );
 
-      /*
-      if (res.additionalUserInfo!.isNewUser) {} // new user code
-      */
-
       emit(AuthConfirmed(user: user));
+    });
 
-      // SelfModule.User user = SelfModule.User(id: res.additionalUserInfo, name: name)
+    on<LogoutUser>((event, emit) async {
+      AuthenticationService.firebaseLogout();
+      emit(AuthMissing());
     });
   }
 }

@@ -1,4 +1,9 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:gide/core/models/store_model.dart';
 import 'package:gide/screens/place_locator/filter_item.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -15,18 +20,31 @@ class PlaceLocator extends StatefulWidget {
 class _PlaceLocatorState extends State<PlaceLocator> {
   late GoogleMapController _controller;
 
-  LatLng _initialcameraposition = LatLng(20.5937, 78.9629);
-  Loc.Location _location = Loc.Location();
-
   var lng, lat;
 
-  bool _searched = false;
+  bool _mapLoading = true;
+
+  bool isMapVisible = false;
+
+  final geo = Geoflutterfire();
+  final _firestore = FirebaseFirestore.instance;
+  late StreamSubscription _subscription;
+
+  List<Store> stores = [];
+
+
 
   @override
   initState() {
     super.initState();
-    _searched = false;
+
     getLocation();
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
   }
 
   Widget _buildFilters() {
@@ -91,12 +109,18 @@ class _PlaceLocatorState extends State<PlaceLocator> {
     );
   }
 
-  void _onMapCreated(GoogleMapController controller) {
+  void _onMapCreated(GoogleMapController controller) async {
     _controller = controller;
 
-    _location.onLocationChanged.listen((loc) {
-      
-    });
+    Future.delayed(
+      const Duration(milliseconds: 550),
+        () => setState(() {isMapVisible = true;}
+      )
+    );
+
+    if (lat != null && lng != null) {
+      await getNearbyStores(LatLng(lat, lng), 1);
+    }
   }
 
   Future getLocation() async {
@@ -106,13 +130,38 @@ class _PlaceLocatorState extends State<PlaceLocator> {
     setState(() {
       lat = currentLocation.latitude;
       lng = currentLocation.longitude;
-      _searched = true;
+    });
+  }
+
+  // distance in km
+  Future<void> getNearbyStores(LatLng loc, double distance) async {
+    GeoFirePoint center = geo.point(latitude: loc.latitude, longitude: loc.longitude);
+
+    var collectionReference = _firestore.collection('stores');
+    Stream<List<DocumentSnapshot>> stream = geo.collection(
+      collectionRef: collectionReference
+    )
+    .within(
+      center: center, 
+      radius: distance, 
+      field: 'location', 
+      strictMode: true
+    );
+
+    _subscription = stream.listen((List<DocumentSnapshot> documentList) {
+      documentList.forEach((doc) { 
+        Store store = Store.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>, null);
+        stores.add(store);
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(onPressed: () {
+        print(stores.length);
+      }),
       resizeToAvoidBottomInset: false,
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
@@ -120,14 +169,26 @@ class _PlaceLocatorState extends State<PlaceLocator> {
         child: Stack(
           children: [
             (lat == null || lng == null) ? 
-            Container() : GoogleMap(
-              initialCameraPosition: CameraPosition(target: LatLng(lat, lng), zoom: 15),
-              mapType: MapType.normal,
-              onMapCreated: _onMapCreated,
-              myLocationEnabled: true,
-              zoomGesturesEnabled: true,
-              myLocationButtonEnabled: false,
-              zoomControlsEnabled: false
+            Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.grey[100],
+              child: const Center(
+                child: CircularProgressIndicator(),
+              )
+            ) : AnimatedOpacity(
+              curve: Curves.fastOutSlowIn,
+              opacity: isMapVisible ? 1.0 : 0,
+              duration: const Duration(milliseconds: 600),
+              child: GoogleMap(
+                initialCameraPosition: CameraPosition(target: LatLng(lat, lng), zoom: 15),
+                mapType: MapType.normal,
+                onMapCreated: _onMapCreated,
+                myLocationEnabled: true,
+                zoomGesturesEnabled: true,
+                myLocationButtonEnabled: false,
+                zoomControlsEnabled: false
+              ),
             ),
             _buildAppBar(),
           ],

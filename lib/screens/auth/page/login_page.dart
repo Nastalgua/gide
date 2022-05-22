@@ -89,6 +89,7 @@ class _LoginPageState extends State<LoginPage> {
             width: width * .8444,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: Colors.white),
             child: TextField(
+              obscureText: true,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderSide: const BorderSide(width: 0, style: BorderStyle.none),

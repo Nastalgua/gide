@@ -16,13 +16,13 @@ class _BaseState extends State<Base> {
     return StreamBuilder(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
+        print("auth changes");
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return const Center(child: Text("Something went wrong..."));
         } else if (snapshot.hasData) {
-          print("once");
-          return Home(); // put the home page here
+          return const Home(); // put the home page here
         }
 
         return const LoginPage();

@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth_module;
+import 'package:gide/core/models/user_model.dart';
+import 'package:gide/core/services/user_service.dart';
 
 import 'package:google_sign_in/google_sign_in.dart' as google_module;
 
@@ -23,12 +25,15 @@ class AuthenticationService {
     final response = await firebase_auth_module.FirebaseAuth.instance.signInWithCredential(credential);
 
     if (response.additionalUserInfo!.isNewUser) {
-      await users.doc(response.user?.uid).set(
-        {
-          'id': response.user?.uid,
-          'displayName': response.user?.displayName
-        }
+      if (response.user == null) return Future.value(response.user);
+      User user = User(
+        id: response.user!.uid, 
+        username: response.user!.displayName!, 
+        credits: const [],
+        favoriteRestaurants: const []
       );
+
+      UserService.updateUser(user);
     }
 
     return Future.value(response.user);
@@ -43,29 +48,25 @@ class AuthenticationService {
   static Future<firebase_auth_module.User?> registerWithEmailAndPassword(email, password, username) async {
     final firebase_auth_module.UserCredential? credential = await auth.createUserWithEmailAndPassword(email: email, password: password);
 
-    await users.doc(credential?.user?.uid).set(
-      {
-        'id': credential?.user?.uid,
-        'displayName': username
-      }
+    if (credential!.user == null) return Future.value(credential.user);
+    User user = User(
+      id: credential.user!.uid, 
+      username: username,
+      credits: const [],
+      favoriteRestaurants: const []
     );
+    
+    UserService.updateUser(user);
 
-    return Future.value(credential?.user);
+    return Future.value(credential.user);
   }
 
   static firebase_auth_module.User? getCurrentUser() {
-    /*
-    final completer = Completer<firebase_auth_module.User>();
-    firebase_auth_module.FirebaseAuth.instance.authStateChanges().listen((firebaseUser) {
-      completer.complete(firebaseUser);
-    });
-
-    return completer.future;
-    */
     return firebase_auth_module.FirebaseAuth.instance.currentUser;
   }
 
   static Future firebaseLogout() async {
     await firebase_auth_module.FirebaseAuth.instance.signOut();
+    
   }
 }

@@ -1,9 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:gide/core/constants/route_constants.dart';
+import 'package:gide/core/models/store_model.dart';
 import 'package:gide/core/services/auth_service.dart';
+import 'package:gide/core/services/store_service.dart';
+import 'package:gide/screens/auth/page/favorites.dart';
 import 'package:gide/screens/auth/page/login_page.dart';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gide/screens/auth/bloc/auth_bloc.dart';
+import 'package:uuid/uuid.dart';
 
 enum Page {
   home,
@@ -124,7 +133,7 @@ class _HomeState extends State<Home> {
         },
         children: [
           BlueScreen(),
-          RedScreen(),
+          FavoritesPage(),
           GreenScreen(),
           YellowScreen()
         ],
@@ -167,14 +176,25 @@ class GreenScreen extends StatelessWidget {
 }
 
 class YellowScreen extends StatelessWidget {
-  const YellowScreen({ Key? key }) : super(key: key);
+  YellowScreen({ Key? key }) : super(key: key);
+
+  final geo = Geoflutterfire();
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.yellow,
       child: IconButton(icon: Icon(Icons.logout), onPressed: () {
-        AuthenticationService.firebaseLogout();
+        // Store store = Store(
+        //   id: const Uuid().v4(),
+        //   name: "Nippon Cha",
+        //   description: "Food",
+        //   ownerId: AuthenticationService.getCurrentUser()!.uid,
+        //   location: geo.point(latitude: 40.764502385838455, longitude: -73.77167621417824)
+        // );
+
+        // StoreSerice.updateStore(store);
+        context.read<AuthBloc>().add(LogoutUser());
       },),
     );
   }

@@ -165,7 +165,6 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   borderRadius: BorderRadius.circular(12)
                 ),
-                
                 hintText: 'Enter password...',
                 hintStyle: const TextStyle(
                   color: Color(0xFFC2C2C2),
