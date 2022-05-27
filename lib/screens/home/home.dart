@@ -12,7 +12,7 @@ import 'package:gide/screens/auth/page/login_page.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gide/screens/auth/bloc/auth_bloc.dart';
-import 'package:uuid/uuid.dart';
+import 'package:gide/screens/auth/page/profile.dart';
 
 enum Page {
   home,
@@ -29,97 +29,95 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _currentIndex = 0;
+  int _currentIndex = 3;
 
-  final PageController _pageController = PageController(initialPage: 0);
+  final PageController _pageController = PageController(initialPage: 3);
   final Color _activeColor = Colors.pink;
   final Color _disableColor = Colors.black45;
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: _createHomePage(),
-        extendBody: true,
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.white,
-          onPressed: () {
-            Navigator.of(context).pushNamed(placeLocatorViewRoute);
-          },
-          child: SvgPicture.asset(
-            'assets/icons/navbar/pin-svgrepo-com 1.svg'
-          ),
+    return Scaffold(
+      body: _createHomePage(),
+      extendBody: true,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.white,
+        onPressed: () {
+          Navigator.of(context).pushNamed(placeLocatorViewRoute);
+        },
+        child: SvgPicture.asset(
+          'assets/icons/navbar/pin-svgrepo-com 1.svg'
         ),
-        bottomNavigationBar: BottomAppBar(
-          shape: const CircularNotchedRectangle(),
-          notchMargin: 15,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Container(
-              height: 55,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      _pageController.animateToPage(
-                        Page.home.index, 
-                        duration: const Duration(milliseconds: 500), 
-                        curve: Curves.ease
-                      );
-                    }, 
-                    icon: SvgPicture.asset(
-                      'assets/icons/navbar/home-svgrepo-com 1.svg',
-                      color: (_currentIndex == Page.home.index) ? _activeColor : _disableColor,
-                    )
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      _pageController.animateToPage(
-                        Page.notifications.index, 
-                        duration: const Duration(milliseconds: 500), 
-                        curve: Curves.ease
-                      );
-                    }, 
-                    icon: SvgPicture.asset(
-                      'assets/icons/navbar/bell.svg',
-                      color: (_currentIndex == Page.notifications.index) ? _activeColor : _disableColor,
-                    )
-                  ),
-                  Container(width: MediaQuery.of(context).size.width * 0.2),
-                  IconButton(
-                    onPressed: () {
-                      _pageController.animateToPage(
-                        Page.favorites.index, 
-                        duration: const Duration(milliseconds: 500), 
-                        curve: Curves.ease
-                      );
-                    }, 
-                    icon: SvgPicture.asset(
-                      'assets/icons/navbar/bookmark.svg',
-                      color: (_currentIndex == Page.favorites.index) ? _activeColor : _disableColor,
-                    )
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      _pageController.animateToPage(
-                        Page.profile.index, 
-                        duration: const Duration(milliseconds: 500), 
-                        curve: Curves.ease
-                      );
-                    }, 
-                    icon: SvgPicture.asset(
-                      'assets/icons/navbar/person.svg',
-                      color: (_currentIndex == Page.profile.index) ? _activeColor : _disableColor,
-                    )
-                  ),
-                ],
-              ),
-            )
-          ),
-        )
       ),
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 15,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Container(
+            height: 55,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    _pageController.animateToPage(
+                      Page.home.index, 
+                      duration: const Duration(milliseconds: 500), 
+                      curve: Curves.ease
+                    );
+                  }, 
+                  icon: SvgPicture.asset(
+                    'assets/icons/navbar/home-svgrepo-com 1.svg',
+                    color: (_currentIndex == Page.home.index) ? _activeColor : _disableColor,
+                  )
+                ),
+                IconButton(
+                  onPressed: () {
+                    _pageController.animateToPage(
+                      Page.notifications.index, 
+                      duration: const Duration(milliseconds: 500), 
+                      curve: Curves.ease
+                    );
+                  }, 
+                  icon: SvgPicture.asset(
+                    'assets/icons/navbar/bell.svg',
+                    color: (_currentIndex == Page.notifications.index) ? _activeColor : _disableColor,
+                  )
+                ),
+                Container(width: MediaQuery.of(context).size.width * 0.2),
+                IconButton(
+                  onPressed: () {
+                    _pageController.animateToPage(
+                      Page.favorites.index, 
+                      duration: const Duration(milliseconds: 500), 
+                      curve: Curves.ease
+                    );
+                  }, 
+                  icon: SvgPicture.asset(
+                    'assets/icons/navbar/bookmark.svg',
+                    color: (_currentIndex == Page.favorites.index) ? _activeColor : _disableColor,
+                  )
+                ),
+                IconButton(
+                  onPressed: () {
+                    _pageController.animateToPage(
+                      Page.profile.index, 
+                      duration: const Duration(milliseconds: 500), 
+                      curve: Curves.ease
+                    );
+                  }, 
+                  icon: SvgPicture.asset(
+                    'assets/icons/navbar/person.svg',
+                    color: (_currentIndex == Page.profile.index) ? _activeColor : _disableColor,
+                  )
+                ),
+              ],
+            ),
+          )
+        ),
+      )
     );
   }
 
@@ -137,7 +135,7 @@ class _HomeState extends State<Home> {
           BlueScreen(),
           FavoritesPage(),
           GreenScreen(),
-          YellowScreen()
+          ProfilePage()
         ],
       ),
     );
