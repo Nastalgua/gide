@@ -12,23 +12,22 @@ class FavoritesPage extends StatelessWidget{
     return Scaffold(
       body: Material(
         color:Color(0xFFF6F6F6),
-        child: SafeArea(
-          child: Stack(
-            children: [
-               
-                Center(
-                  child: Container(
-                    width: width * .844,
-                    child: Column(
-                      children: [
-                        favorites(height, width)
-                      ],
+        child: Expanded(
+          child: SafeArea(
+            child: Center(
+                    child: Container(
+                      height: height * .915,
+                      width: width * .844,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            favorites(height, width)
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                )
-              
-              
-            ],
+                  )
+                
           ),
         )
            
@@ -176,7 +175,7 @@ class FavoritesPage extends StatelessWidget{
 
   Widget favorites(double height, double width){
     return Container(
-      height: height * .9039,
+      height: height * .875,
       width: width,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 8.0),
