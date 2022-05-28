@@ -105,7 +105,7 @@ class ProfilePage extends StatelessWidget{
           Row(
             children: [
               Container(
-                height: height* .07125,
+                height: height * .07125,
                 width: height * .07125,
                 margin: const EdgeInsets.only(right: 6),
                 child: ClipRRect(

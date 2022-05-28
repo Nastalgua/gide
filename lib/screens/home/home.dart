@@ -13,6 +13,7 @@ import 'package:gide/screens/auth/page/login_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gide/screens/auth/bloc/auth_bloc.dart';
 import 'package:gide/screens/auth/page/profile.dart';
+import 'package:uuid/uuid.dart';
 
 enum Page {
   home,
@@ -135,7 +136,8 @@ class _HomeState extends State<Home> {
           BlueScreen(),
           FavoritesPage(),
           GreenScreen(),
-          ProfilePage()
+          ProfilePage(),
+          // YellowScreen()
         ],
       ),
     );
@@ -185,16 +187,16 @@ class YellowScreen extends StatelessWidget {
     return Container(
       color: Colors.yellow,
       child: IconButton(icon: Icon(Icons.logout), onPressed: () {
-        // Store store = Store(
-        //   id: const Uuid().v4(),
-        //   name: "Nippon Cha",
-        //   description: "Food",
-        //   ownerId: AuthenticationService.getCurrentUser()!.uid,
-        //   location: geo.point(latitude: 40.764502385838455, longitude: -73.77167621417824)
-        // );
+        Store store = Store(
+          id: const Uuid().v4(),
+          name: "Food Plus Supermarket",
+          description: "Food",
+          ownerId: AuthenticationService.getCurrentUser()!.uid,
+          location: geo.point(latitude: 40.75342280139386, longitude: -73.82239825669403)
+        );
 
-        // StoreSerice.updateStore(store);
-        context.read<AuthBloc>().add(LogoutUser());
+        StoreSerice.updateStore(store);
+        // context.read<AuthBloc>().add(LogoutUser());
       },),
     );
   }

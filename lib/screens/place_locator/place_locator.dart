@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:gide/core/models/store_model.dart';
+import 'package:gide/screens/place_locator/bottom_bar.dart';
 import 'package:gide/screens/place_locator/filter_item.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -19,10 +20,9 @@ class PlaceLocator extends StatefulWidget {
 
 class _PlaceLocatorState extends State<PlaceLocator> {
   late GoogleMapController _controller;
+  PageController _pageController = PageController();
 
   var lng, lat;
-
-  bool _mapLoading = true;
 
   bool isMapVisible = false;
 
@@ -30,9 +30,11 @@ class _PlaceLocatorState extends State<PlaceLocator> {
   final _firestore = FirebaseFirestore.instance;
   late StreamSubscription _subscription;
 
-  List<Store> stores = [];
+  List<Store> _stores = [];
+  Set<Marker> _markers = {};
+  Set<Circle> _circles = {};
 
-
+  int _selectedIndex = 0;
 
   @override
   initState() {
@@ -87,7 +89,7 @@ class _PlaceLocatorState extends State<PlaceLocator> {
       left: 15,
       child: SafeArea(
         child: Container(
-          decoration: BoxDecoration(color: const Color(0xFFF6F6F6), borderRadius: BorderRadius.circular(8)),
+          decoration: BoxDecoration(color: Color.fromARGB(255, 252, 252, 252), borderRadius: BorderRadius.circular(8)),
           padding: const EdgeInsets.all(8),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -119,8 +121,17 @@ class _PlaceLocatorState extends State<PlaceLocator> {
     );
 
     if (lat != null && lng != null) {
-      await getNearbyStores(LatLng(lat, lng), 1);
-    }
+      double distance = 0.5;
+      await getNearbyStores(LatLng(lat, lng), distance);
+
+      _circles.add(Circle(
+        strokeColor: Colors.transparent,
+        fillColor: Color(0x3069D0FF),
+        circleId: const CircleId("self-circle"),
+        center: LatLng(lat, lng),
+        radius: distance * 1000,
+      ));
+    } 
   }
 
   Future getLocation() async {
@@ -151,17 +162,50 @@ class _PlaceLocatorState extends State<PlaceLocator> {
     _subscription = stream.listen((List<DocumentSnapshot> documentList) {
       documentList.forEach((doc) { 
         Store store = Store.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>, null);
-        stores.add(store);
+        _stores.add(store);
       });
+
+      for (int i = 0; i < _stores.length; i++) {
+        var store = _stores[i];
+
+        setState(() {
+          _markers.add(
+            Marker(
+              markerId: MarkerId(store.id), 
+              position: LatLng(store.location.latitude, store.location.longitude),
+              onTap: () {
+                updateSelectedIndex(i);
+              }
+            )
+          );
+        });
+      }
     });
+  }
+
+  void updateSelectedIndex(int index) {
+    setState(() {
+      _selectedIndex = index;
+
+      _pageController.animateToPage(
+        index, 
+        duration: const Duration(milliseconds: 500), 
+        curve: Curves.ease
+      );
+    });
+  }
+
+  void updateCameraPosition(double lat, double lng) {
+    _controller.animateCamera(
+      CameraUpdate.newLatLng(
+        LatLng(lat, lng)
+      )
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        print(stores.length);
-      }),
       resizeToAvoidBottomInset: false,
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
@@ -181,7 +225,9 @@ class _PlaceLocatorState extends State<PlaceLocator> {
               opacity: isMapVisible ? 1.0 : 0,
               duration: const Duration(milliseconds: 600),
               child: GoogleMap(
-                initialCameraPosition: CameraPosition(target: LatLng(lat, lng), zoom: 15),
+                initialCameraPosition: CameraPosition(target: LatLng(lat, lng), zoom: 16),
+                markers: _markers,
+                circles: _circles,
                 mapType: MapType.normal,
                 onMapCreated: _onMapCreated,
                 myLocationEnabled: true,
@@ -190,7 +236,14 @@ class _PlaceLocatorState extends State<PlaceLocator> {
                 zoomControlsEnabled: false
               ),
             ),
-            _buildAppBar(),
+            // _buildAppBar(),
+            BottomBar(
+              stores: _stores,
+              selectedIndex: _selectedIndex,
+              updateSelectedIndex: updateSelectedIndex,
+              pageController: _pageController,
+              updateCameraPosition: updateCameraPosition
+            ),
           ],
         ),
       ),
