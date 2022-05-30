@@ -9,7 +9,7 @@ import 'package:gide/core/services/auth_service.dart';
 import 'package:gide/core/services/store_service.dart';
 import 'package:gide/screens/auth/page/favorites.dart';
 import 'package:gide/screens/auth/page/login_page.dart';
-
+import 'package:gide/screens/auth/page/Announcements.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gide/screens/auth/bloc/auth_bloc.dart';
 import 'package:uuid/uuid.dart';
@@ -134,7 +134,8 @@ class _HomeState extends State<Home> {
         children: [
           BlueScreen(),
           FavoritesPage(),
-          GreenScreen(),
+          AnnouncementPage(),
+          //GreenScreen(),
           YellowScreen()
         ],
       ),
