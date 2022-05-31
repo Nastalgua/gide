@@ -30,7 +30,7 @@ class AuthenticationService {
         id: response.user!.uid, 
         username: response.user!.displayName!, 
         credits: const [],
-        favoriteRestaurants: const []
+        favoriteStores: const []
       );
 
       UserService.updateUser(user);
@@ -53,7 +53,7 @@ class AuthenticationService {
       id: credential.user!.uid, 
       username: username,
       credits: const [],
-      favoriteRestaurants: const []
+      favoriteStores: const []
     );
     
     UserService.updateUser(user);

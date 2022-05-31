@@ -5,20 +5,20 @@ import 'package:gide/core/models/credit_model.dart';
 class User extends Equatable {
   final String id;
   final String username;
-  final String? restaurantId;
+  final String? storeId;
   List<Credit>? credits = [];
-  List<String>? favoriteRestaurants = [];
+  List<String>? favoriteStores = [];
 
   User({
     required this.id,
     required this.username,
-    this.restaurantId,
+    this.storeId,
     required this.credits,
-    required this.favoriteRestaurants
+    required this.favoriteStores
   });
 
   @override
-  List<Object?> get props => [id, username, restaurantId];
+  List<Object?> get props => [id, username, storeId];
 
   factory User.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -28,11 +28,11 @@ class User extends Equatable {
     return User(
       id: data?['id'],
       username: data?['username'],
-      restaurantId: data?['restaurantId'],
+      storeId: data?['storeId'],
       credits:
         data?['credits'] is Iterable ? List.from(data?['credits']) : null,
-      favoriteRestaurants: 
-        data?['favoriteRestaurants'] is Iterable ? List.from(data?['favoriteRestaurants']) : null,
+      favoriteStores: 
+        data?['favoriteStores'] is Iterable ? List.from(data?['favoriteStores']) : null,
     );
   }
 
@@ -40,9 +40,9 @@ class User extends Equatable {
     return {
       if (id != null) "id": id,
       if (username != null) "username": username,
-      if (restaurantId != null) "restaurantId": restaurantId,
+      if (storeId != null) "storeId": storeId,
       if (credits != null) "credits": credits,
-      if (favoriteRestaurants != null) "favoriteRestaurants": favoriteRestaurants
+      if (favoriteStores != null) "favoriteRestaurants": favoriteStores
     };
   }
 }

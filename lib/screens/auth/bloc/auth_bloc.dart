@@ -38,7 +38,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           id: resUser.uid,
           username: resUser.displayName!, // TODO: this needs to change
           credits: const [],
-          favoriteRestaurants: const []
+          favoriteStores: const []
         );
 
         emit(AuthConfirmed(user: user));
@@ -57,7 +57,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         id: res.uid,
         username: res.displayName ?? "",
         credits: const [],
-        favoriteRestaurants: const []
+        favoriteStores: const []
       );
 
       emit(AuthConfirmed(user: user));
@@ -73,7 +73,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         id: res.uid,
         username: res.displayName ?? "",
         credits: const [],
-        favoriteRestaurants: const []
+        favoriteStores: const []
       );
 
       emit(AuthConfirmed(user: user));
@@ -90,7 +90,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         id: res.uid, 
         username: res.displayName!, // TODO: this needs to change
         credits: const [],
-        favoriteRestaurants: const []
+        favoriteStores: const []
       );
 
       emit(AuthConfirmed(user: user));

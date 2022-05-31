@@ -15,7 +15,7 @@ class StoreSerice {
 
     await stores.doc(store.id).withConverter(
       fromFirestore: Store.fromFirestore, 
-      toFirestore: (Store restaurant, options) => restaurant.toFirestore(),
+      toFirestore: (Store store, options) => store.toFirestore(),
     ).set(store);
   }
 }

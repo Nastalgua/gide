@@ -3,17 +3,19 @@ import 'package:equatable/equatable.dart';
 
 class Credit extends Equatable {
   final String id;
-  final DateTime expireDate;
-  final String restaurantId;
+  final Timestamp expireDate;
+  final String storeId;
+  final double amtOff;
 
   const Credit({
     required this.id,
     required this.expireDate,
-    required this.restaurantId,
+    required this.storeId,
+    required this.amtOff
   });
 
   @override
-  List<Object?> get props => [id, expireDate, restaurantId];
+  List<Object?> get props => [id, expireDate, storeId];
 
   factory Credit.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -23,7 +25,8 @@ class Credit extends Equatable {
     return Credit(
       id: data?['id'],
       expireDate: data?['expireDate'],
-      restaurantId: data?['restaurantId'],
+      storeId: data?['storeId'],
+      amtOff: data?['amtOff']
     );
   }
 
@@ -31,7 +34,8 @@ class Credit extends Equatable {
     return {
       if (id != null) "id": id,
       if (expireDate != null) "expireDate": expireDate,
-      if (restaurantId != null) "type": restaurantId,
+      if (storeId != null) "storeId": storeId,
+      if (amtOff != null) "amtOff": amtOff
     };
   }
 }

@@ -1,14 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gide/core/services/auth_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ProfilePage extends StatelessWidget{
   const ProfilePage({Key? key}) : super(key: key);
-
+  
   Widget build(BuildContext context){
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     
+    var user = AuthenticationService.getCurrentUser()!;
+
     return Scaffold(
       body: Material(
         color:const Color(0xFFF6F6F6),
@@ -31,7 +35,7 @@ class ProfilePage extends StatelessWidget{
                     'hi', 
                     'hi', 
                     '123-1231-1231', 
-                    "testing123@gmail.com"
+                    user.email!
                   ),
                   iconHeader(
                     height, 
@@ -93,6 +97,9 @@ class ProfilePage extends StatelessWidget{
   }
 
   Widget profileBox(double height, double width, String user, String name, String phoneNumber, String email){
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    var user = AuthenticationService.getCurrentUser()!;
+
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFFFFFFF),
@@ -116,18 +123,38 @@ class ProfilePage extends StatelessWidget{
                   ),
                 ) 
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(name, style: GoogleFonts.poppins(fontSize: 16)),
-                  Text(
-                    '@' + user, 
-                    style: GoogleFonts.poppins(
-                      fontSize: 11, 
-                      color: const Color(0xFF838383)
-                    )
-                  )
-                ],
+              FutureBuilder<DocumentSnapshot>(
+                future: users.doc(user.uid).get(),
+                builder: ((context, snapshot) {
+                  if (snapshot.hasError) {
+                    return const Text("Something went wrong");
+                  }
+
+                  if (snapshot.hasData && !snapshot.data!.exists) {
+                    return const Text("Document does not exist");
+                  }
+
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
+
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(data['username'], style: GoogleFonts.poppins(fontSize: 16)),
+                        Text(
+                          '@' + data['username'], 
+                          style: GoogleFonts.poppins(
+                            fontSize: 11, 
+                            color: const Color(0xFF838383)
+                          )
+                        )
+                      ],
+                    );
+                  }
+
+                  return const Text("loading");
+                })
               )
             ],
           ),
@@ -149,11 +176,13 @@ class ProfilePage extends StatelessWidget{
             thickness: 1,
           ),
           profileEntry("Email", email),
+          /*
           const Divider(
             height: 1,
             thickness: 1,
           ),
           profileEntry("Phone Number", "123-123-1234")
+          */
         ],
       )
     );

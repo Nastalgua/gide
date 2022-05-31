@@ -11,41 +11,41 @@ class FavoritesPage extends StatelessWidget{
 
     return Scaffold(
       body: Material(
-        color:Color(0xFFF6F6F6),
-        child: Expanded(
-          child: SafeArea(
-            child: Center(
-                    child: Container(
-                      height: height * .915,
-                      width: width * .844,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            favorites(height, width)
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                
-          ),
+        color:const Color(0xFFF6F6F6),
+        child: SafeArea(
+          child: Center(
+            child: Container(
+              height: height,
+              width: width * .844,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    favorites(height, width)
+                  ],
+                ),
+              ),
+            ),
+          )
         )
            
-        )
+      )
     );
   }
 
   Widget favoriteText(double height, double width){
-    return const Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 8),
+      child: const Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
             'Favorites',
             style: TextStyle(
-              fontSize: 19,
-              fontWeight: FontWeight.w600,
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
               fontFamily: 'Poppins'
             )
           ),
+      ),
     );
     
   }

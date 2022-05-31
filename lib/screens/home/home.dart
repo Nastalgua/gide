@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:gide/core/constants/route_constants.dart';
+import 'package:gide/core/models/credit_model.dart';
 import 'package:gide/core/models/store_model.dart';
+import 'package:gide/core/models/user_model.dart' as self_module;
 import 'package:gide/core/services/auth_service.dart';
 import 'package:gide/core/services/store_service.dart';
 import 'package:gide/screens/auth/page/favorites.dart';
@@ -134,10 +136,10 @@ class _HomeState extends State<Home> {
         },
         children: [
           BlueScreen(),
-          FavoritesPage(),
           GreenScreen(),
-          ProfilePage(),
-          // YellowScreen()
+          FavoritesPage(),
+          // ProfilePage(),
+          YellowScreen()
         ],
       ),
     );
@@ -187,15 +189,24 @@ class YellowScreen extends StatelessWidget {
     return Container(
       color: Colors.yellow,
       child: IconButton(icon: Icon(Icons.logout), onPressed: () {
-        Store store = Store(
-          id: const Uuid().v4(),
-          name: "Food Plus Supermarket",
-          description: "Food",
-          ownerId: AuthenticationService.getCurrentUser()!.uid,
-          location: geo.point(latitude: 40.75342280139386, longitude: -73.82239825669403)
+
+        // TODO finish this
+        Credit credit = Credit(
+          id: const Uuid().v4(), 
+          expireDate: Timestamp.fromDate(DateTime(2022, 6, 2)), 
+          storeId: "3f6b5aa0-a14f-45d3-aff2-79a59b73bbca", 
+          amtOff: 0.5
         );
 
-        StoreSerice.updateStore(store);
+        // Store store = Store(
+        //   id: const Uuid().v4(),
+        //   name: "Food Plus Supermarket",
+        //   description: "Food",
+        //   ownerId: AuthenticationService.getCurrentUser()!.uid,
+        //   location: geo.point(latitude: 40.75342280139386, longitude: -73.82239825669403)
+        // );
+
+        // StoreSerice.updateStore(store);
         // context.read<AuthBloc>().add(LogoutUser());
       },),
     );
