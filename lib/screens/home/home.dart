@@ -11,10 +11,9 @@ import 'package:gide/core/services/auth_service.dart';
 import 'package:gide/core/services/store_service.dart';
 import 'package:gide/screens/auth/page/favorites.dart';
 import 'package:gide/screens/auth/page/login_page.dart';
-
+import 'package:gide/screens/auth/page/Announcements.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gide/screens/auth/bloc/auth_bloc.dart';
-import 'package:gide/screens/auth/page/profile.dart';
 import 'package:uuid/uuid.dart';
 
 enum Page {
@@ -32,9 +31,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _currentIndex = 3;
+  int _currentIndex = 0;
 
-  final PageController _pageController = PageController(initialPage: 3);
+  final PageController _pageController = PageController(initialPage: 0);
   final Color _activeColor = Colors.pink;
   final Color _disableColor = Colors.black45;
 
