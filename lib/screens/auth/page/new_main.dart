@@ -11,6 +11,13 @@ class MainPage extends StatefulWidget{
 class _MainPageState extends State<MainPage>{
   String _searchText = "";
 
+  void initState(){
+    super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((_){
+      
+    });
+  }
+
   Widget build(BuildContext context){
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
@@ -23,13 +30,15 @@ class _MainPageState extends State<MainPage>{
             child: Container(
               width: width * .844,
               
-                child: Column(
-                  //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildTextField(context),
-                    _buildFavStorePromotion(context),
-                    _buildAnnouncements(context)
-                  ],
+                child: SingleChildScrollView(
+                  child: Column(
+                    //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildTextField(context),
+                      _buildFavStorePromotion(context),
+                      _buildAnnouncements(context)
+                    ],
+                  ),
                 ),
               
             ),
@@ -70,10 +79,12 @@ class _MainPageState extends State<MainPage>{
   }
 
   Widget _buildFavStorePromotion(BuildContext context){
+    ScrollController sc = ScrollController(initialScrollOffset: 50);
+   
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Container(
-      height: height * .305,
+      height: height * .335,
       child: Column(
         children: [
           Align(
@@ -82,6 +93,7 @@ class _MainPageState extends State<MainPage>{
               child: const Text('Favorite Store Promotions')
             ),
           ),
+          SizedBox(height: height * .01),
           Expanded(
             child: Center(
               child: NotificationListener<OverscrollIndicatorNotification>(
@@ -90,14 +102,28 @@ class _MainPageState extends State<MainPage>{
                 },
                 child: ScrollConfiguration(
                 behavior: MyBehavior(),
-                child: Scrollbar(
-                  isAlwaysShown: true,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                          
-                    itemCount: 10,
-                    itemBuilder: (context, index) => _buildPromotionTab(context, 29, 'never lol', 'noods', 'food'),
-                    separatorBuilder: (context, index) => SizedBox(width: height * .01875),
+                child: Theme(
+                  data: Theme.of(context).copyWith(
+                    scrollbarTheme: ScrollbarThemeData(
+                      thumbColor: MaterialStateProperty.all(Color(0xFF505050)),
+                      trackVisibility: MaterialStateProperty.all(true),
+                      trackColor: MaterialStateProperty.all(Color(0xFFE8E8E8)),
+                      radius: Radius.circular(20),
+                      thickness: MaterialStateProperty.all(height * .00875)
+                    )
+                  ),
+                  child: Scrollbar(
+                    isAlwaysShown: true,
+                    controller: sc,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      controller: sc,
+                      physics: ScrollPhysics(),
+                      itemCount: 10,
+                      itemBuilder: (context, index) => _buildPromotionTab(context, 29, 'never lol', 'noods', 'food'),
+                      separatorBuilder: (context, index) => SizedBox(width: height * .01875),
+                    ),
                   ),
                 ),
               )
@@ -115,141 +141,147 @@ class _MainPageState extends State<MainPage>{
     return GestureDetector(
       onTap: () => {},
       child: Center(
-        child: Container(
-          height: height * .25875,
-          width: width * .402625,
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFFFFF),
-            borderRadius: BorderRadius.circular(11),
-          ),
-          child: Container(
-            
-            child: Container(
-              width: width * .325,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  SizedBox(
-                    height: height * .01,
-                  ),
-                  //image and discount
-                  Container(
-                    height: height * .15475,
-                    width: width * .325,
-                    child: Stack(
-                      children: [
-                        Container(
-                              height: height* .15125,
-                              width: height * .27125,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(11),
-                                child: Image.asset(
-                                      'assets/images/noodles.png',
-                                      fit: BoxFit.fill
-                                    ),
-                              )
-                                
-                        ),
-                        Positioned(
-                          left: 10,
-                          top: 8,
-                          child: Container(
-                            width: width * .0778,
-                            height: height * .0175,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(3),
-                              color: const Color(0xFFFFFFFF)
-                            ),
-                            child: Center(
-                              child: Text(
-                                "-${discount}%",
-                                style: const TextStyle(
-                                  fontSize: 9,
-                                  color: Color(0xFF4670C1)
-                                )
-                              ),
-                            )
-                          ),
-                        ),
-                        
-                      ],
-                    )
-                  ),
-                  //text info below
-                  
-                  Container(
-                    width: width * .325,
-                    child: Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            name,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w900,
-                              fontSize: 14.5
-                            )
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            type,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w300,
-                                color: Color(0xFF838383),
-                                fontSize: 11
-                            )
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              discountEnd,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w300,
-                                color: Color(0xFF4670C1),
-                                fontSize: 11.5
-    
-                              )
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                const Text(
-                                  'Let\s Go ',
-                                  style: TextStyle(
-                                    fontSize: 11.5,
-                            
-                                    fontFamily: 'Poppins'
-                                    )
+        child: Column(
+          children: [
+            Container(
+              height: height * .25875,
+              width: width * .312625,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFFFFF),
+                borderRadius: BorderRadius.circular(11),
+              ),
+              child: Container(
+                width: width * .325,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                          height: height * .15475,
+                          width: width * .325,
+                          child: Stack(
+                            children: [
+                              Center(
+                                child: Container(
+                                      height: height * .15125,
+                                      width: width * .27125,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(11),
+                                        child: Image.asset(
+                                              'assets/images/noodles.png',
+                                              fit: BoxFit.fill
+                                            ),
+                                      )
+                                        
                                 ),
-                                SvgPicture.asset(
-                                  'assets/icons/Arrow 1.svg',
-                                  height: height * .01,
-                                  width: width * .01,
-                                  color: Colors.black,
-                                )
+                              ),
+                              Positioned(
+                                left: 20,
+                                top: 10,
+                                child: Container(
+                                  width: width * .0578,
+                                  height: height * .0175,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(3),
+                                    color: const Color(0xFFFFFFFF)
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "-${discount}%",
+                                      style: const TextStyle(
+                                        fontSize: 8,
+                                        color: Color(0xFF4670C1)
+                                      )
+                                    ),
+                                  )
+                                ),
+                              ),
+                              
+                            ],
+                          )
+                        ),
+
+                        Center(
+                          child: Container(
+                            width:  width * .27125,
+                            child: Column(
+                              children: [
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    name,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 14.5
+                                    )
+                                  ),
+                                ),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    type,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w300,
+                                        color: Color(0xFF838383),
+                                        fontSize: 11
+                                    )
+                                  ),
+                                ),
+                                SizedBox(height: height * .0175),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      discountEnd,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w300,
+                                        color: Color(0xFF4670C1),
+                                        fontSize: 11.5
+    
+                                      )
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        const Text(
+                                          'Let\s Go ',
+                                          style: TextStyle(
+                                            fontSize: 11.5,
                                     
+                                            fontFamily: 'Poppins'
+                                            )
+                                        ),
+                                        SvgPicture.asset(
+                                          'assets/icons/Arrow 1.svg',
+                                          height: height * .01,
+                                          width: width * .01,
+                                          color: Colors.black,
+                                        )
+                                            
+                                      ],
+                                    ),
+                                    
+                                  ],
+                                ),
                               ],
                             ),
-                            
-                          ],
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                          ),
+                        ) 
+                    ],
+                  ),
+                )
+                
+              )
             ),
-          )
+            SizedBox(height: height * .00)
+          ],
         ),
       ),
     );
   }
 
   Widget _buildAnnouncements(BuildContext context){
+    
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Container(
@@ -264,20 +296,23 @@ class _MainPageState extends State<MainPage>{
               child: const Text('Announcements')
             ),
           ),
+          SizedBox(height: height * .013),
           Expanded(
             child: Center(
               child: NotificationListener<OverscrollIndicatorNotification>(
                 onNotification: (OverscrollIndicatorNotification overScroll) {
+                  overScroll.disallowGlow();
                   return false;
                 },
+                
                 child: ScrollConfiguration(
                 behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
                 child: Scrollbar(
                   isAlwaysShown: false,
-                  
+                  thickness: 0,
                   child: ListView.separated(
                     scrollDirection: Axis.vertical,
-                          
+                        
                     itemCount: 10,
                     itemBuilder: (context, index) => _buildAnnouncementTab(context),
                     separatorBuilder: (context, index) => SizedBox(height: height * .03375),
