@@ -40,7 +40,7 @@ class _BottomBarState extends State<BottomBar> {
       left: 15,
       child: GestureDetector(
         onVerticalDragEnd: (dragUpdateDetails) { // TODO: Change the page here
-          Navigator.of(context).pushNamed(profileRoute);
+          Navigator.of(context).pushNamed(storeRoute);
         },
         child: Container(
           decoration: BoxDecoration(

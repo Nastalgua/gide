@@ -12,20 +12,18 @@ class FavoritesPage extends StatelessWidget{
     return Scaffold(
       body: Material(
         color:const Color(0xFFF6F6F6),
-        child: SafeArea(
-          child: Center(
-            child: Container(
-              height: height,
-              width: width * .844,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    favorites(height, width)
-                  ],
-                ),
+        child: Center(
+          child: SizedBox(
+            height: height,
+            width: width * 0.8,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  favorites(height, width)
+                ],
               ),
             ),
-          )
+          ),
         )
            
       )
@@ -47,13 +45,14 @@ class FavoritesPage extends StatelessWidget{
           ),
       ),
     );
-    
   }
 
   Widget favoriteTab(String name, String desc, double height, double width){
     return 
-       ElevatedButton(
-        onPressed: () {},
+      ElevatedButton(
+        onPressed: () {
+          print("wrok");
+        },
         style: ElevatedButton.styleFrom(
           elevation: 0,
           shadowColor: Colors.transparent,
@@ -64,17 +63,19 @@ class FavoritesPage extends StatelessWidget{
         ),
         child: Container(
           height: height * .14125,
+          width: width * 0.8,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(11),
-            color: Color(0xFFFFFFFF)
+            color: const Color(0xFFFFFFFF)
           ),
           child: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Container(
-                  height: height * .09875,
-                  width: width * .25,
+                  height: height * .11,
+                  width: height * 0.11,
+                  margin: EdgeInsets.only(right: 20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(11),
                     image: const DecorationImage(
@@ -84,7 +85,7 @@ class FavoritesPage extends StatelessWidget{
                   ),
                 ),
                 Flexible(
-                  child: Container(
+                  child: SizedBox(
                       height: height * .09875,
                       width: width * .45,
                       child: Column(
@@ -162,7 +163,6 @@ class FavoritesPage extends StatelessWidget{
           child: ScrollConfiguration(
             behavior: MyBehavior(),
             child: ListView.separated(
-              padding: EdgeInsets.all(0),
               itemCount: 10,
               itemBuilder: (context, index) => favoriteTab("TEST", "TEST", height, width),
               separatorBuilder: (context, index) => SizedBox(height: height * .01875),
@@ -174,7 +174,7 @@ class FavoritesPage extends StatelessWidget{
   }
 
   Widget favorites(double height, double width){
-    return Container(
+    return SizedBox(
       height: height * .875,
       width: width,
       child: Padding(

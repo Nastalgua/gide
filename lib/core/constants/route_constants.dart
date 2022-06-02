@@ -5,3 +5,5 @@ const String loginRoute = '/login';
 const String favoritesRoute = '/favorites';
 const String profileRoute = '/profile';
 const String mainRoute = '/main';
+const String storeRoute = '/store';
+const String createStoreRoute = '/create-store';

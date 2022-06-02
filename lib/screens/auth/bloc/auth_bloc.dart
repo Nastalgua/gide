@@ -11,36 +11,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final auth = FirebaseAuth.instance;
 
   AuthBloc() : super(AuthInitial()) {
-    /*
-    on<LoadAuth>((event, emit) {
-      // TODO: check if user is already logged in
-      print(FirebaseAuth.instance.currentUser);
-      if (FirebaseAuth.instance.currentUser != null) {
-        User resUser = FirebaseAuth.instance.currentUser!;
-        self_module.User user = self_module.User(
-            id: resUser.uid,
-            fullName: resUser.displayName!,
-            username: resUser.displayName! // TODO: this needs to change
-            );
-
-        emit(AuthConfirmed(user: user));
-      }
-    });
-    */
 
     on<LoadAuth>((event, emit) async {
       // TODO: check if user is already logged in
-      // await FirebaseAuth.instance.authStateChanges
       User? resUser = AuthenticationService.getCurrentUser();
-
+      
       if (resUser != null) {
-        self_module.User user = self_module.User(
-          id: resUser.uid,
-          username: resUser.displayName!, // TODO: this needs to change
-          credits: const [],
-          favoriteStores: const []
-        );
-
+        self_module.User user = await AuthenticationService.setUserInfo();
+        
         emit(AuthConfirmed(user: user));
       } else {
         emit(AuthMissing());
@@ -59,7 +37,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         credits: const [],
         favoriteStores: const []
       );
-
+      
       emit(AuthConfirmed(user: user));
     });
 

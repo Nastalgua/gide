@@ -4,12 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:gide/core/models/store_model.dart';
+import 'package:gide/screens/auth/page/favorites.dart';
 import 'package:gide/screens/place_locator/bottom_bar.dart';
 import 'package:gide/screens/place_locator/filter_item.dart';
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_place/google_place.dart' as GooglePlace;
-import 'package:location/location.dart' as Loc;
+import 'package:location/location.dart' as loc;
 
 class PlaceLocator extends StatefulWidget {
   const PlaceLocator({Key? key}) : super(key: key);
@@ -51,37 +51,26 @@ class _PlaceLocatorState extends State<PlaceLocator> {
 
   Widget _buildFilters() {
     return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.75,
       height: 40,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: const [
-          FilterItem(name: "Interests"),
-          FilterItem(name: "Surprise Me!"),
-        ],
+      child: ScrollConfiguration(
+        behavior: MyBehavior(),
+        child: ListView(
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          children: const [
+            FilterItem(name: "Interests"),
+            FilterItem(name: "Surprise Me!"),
+            FilterItem(name: "Surprise Me!"),
+            FilterItem(name: "Surprise Me!"),
+            FilterItem(name: "Surprise Me!"),
+            FilterItem(name: "Surprise Me!"),
+          ],
+        ),
       ),
     );
   }
-
-  Widget _buildTextField() {
-    return TextField(
-      decoration: InputDecoration(
-        enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.transparent),
-          borderRadius: BorderRadius.circular(5.5),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.transparent),
-          borderRadius: BorderRadius.circular(5.5),
-        ),
-        hintText: "Search here...",
-        hintStyle: const TextStyle(color: Color(0xFFC2C2C2)),
-        suffixIcon: const Icon(Icons.search, color: Color(0xFF3D3D3D)),
-        filled: true,
-        fillColor: Colors.white
-      ),
-    );
-  }
-
+  
   Widget _buildAppBar() {
     return Positioned(
       top: 15,
@@ -91,9 +80,9 @@ class _PlaceLocatorState extends State<PlaceLocator> {
         child: Container(
           decoration: BoxDecoration(color: Color.fromARGB(255, 252, 252, 252), borderRadius: BorderRadius.circular(8)),
           padding: const EdgeInsets.all(8),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
+            // mainAxisSize: MainAxisSize.min,
+            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               IconButton(
                 splashColor: Colors.grey,
@@ -102,7 +91,7 @@ class _PlaceLocatorState extends State<PlaceLocator> {
                   Navigator.of(context).pop();
                 },
               ),
-              _buildTextField(),
+              // _buildTextField(),
               _buildFilters()
             ],
           ),
@@ -135,7 +124,7 @@ class _PlaceLocatorState extends State<PlaceLocator> {
   }
 
   Future getLocation() async {
-    final location = Loc.Location();
+    final location = loc.Location();
     var currentLocation = await location.getLocation();
 
     setState(() {
@@ -236,7 +225,7 @@ class _PlaceLocatorState extends State<PlaceLocator> {
                 zoomControlsEnabled: false
               ),
             ),
-            // _buildAppBar(),
+            _buildAppBar(),
             BottomBar(
               stores: _stores,
               selectedIndex: _selectedIndex,

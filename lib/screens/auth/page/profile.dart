@@ -1,8 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:gide/core/constants/route_constants.dart';
+import 'package:gide/core/models/store_model.dart';
 import 'package:gide/core/services/auth_service.dart';
+import 'package:gide/core/services/store_service.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:uuid/uuid.dart';
 
 class ProfilePage extends StatelessWidget{
   const ProfilePage({Key? key}) : super(key: key);
@@ -12,6 +17,8 @@ class ProfilePage extends StatelessWidget{
     double width = MediaQuery.of(context).size.width;
     
     var user = AuthenticationService.getCurrentUser()!;
+
+    final geo = Geoflutterfire();
 
     return Scaffold(
       body: Material(
@@ -44,10 +51,55 @@ class ProfilePage extends StatelessWidget{
                     'Learn more about Gide', 
                     'assets/icons/profile/info.svg'
                   ),
-                  aboutUsBox(
+                  infoBox(
                     height, 
-                    width
-                  )
+                    width,
+                    [boxEntry(
+                      "Acknowledgements", 
+                      'assets/icons/profile/heart.svg', 
+                      () {},
+                      width, height)
+                    ]
+                  ),
+                  iconHeader(
+                    height, 
+                    width, 
+                    'Store', 
+                    'Manage Store', 
+                    'assets/icons/profile/store.svg'
+                  ),
+                  infoBox(
+                    height, 
+                    width,
+                    [
+                      boxEntry(
+                        "View store", 
+                        'assets/icons/profile/heart.svg', 
+                        () {
+                          // Navigator.of(context).pushNamed(storeRoute, arguments: {
+                          //   'store': 
+                          // });
+                        },
+                        width, 
+                        height
+                      ),
+                      const Divider(
+                        height: 1,
+                        thickness: 1,
+                        endIndent: 12,
+                        indent: 12,
+                      ),
+                      boxEntry(
+                        "Create store", 
+                        'assets/icons/profile/plus.svg', 
+                        () {
+                          Navigator.of(context).pushNamed(createStoreRoute);
+                        },
+                        width, 
+                        height
+                      ),
+                    ]
+                  ),
                 ],
               ),
             ),
@@ -97,9 +149,6 @@ class ProfilePage extends StatelessWidget{
   }
 
   Widget profileBox(double height, double width, String user, String name, String phoneNumber, String email){
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-    var user = AuthenticationService.getCurrentUser()!;
-
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFFFFFFF),
@@ -123,38 +172,19 @@ class ProfilePage extends StatelessWidget{
                   ),
                 ) 
               ),
-              FutureBuilder<DocumentSnapshot>(
-                future: users.doc(user.uid).get(),
-                builder: ((context, snapshot) {
-                  if (snapshot.hasError) {
-                    return const Text("Something went wrong");
-                  }
-
-                  if (snapshot.hasData && !snapshot.data!.exists) {
-                    return const Text("Document does not exist");
-                  }
-
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
-
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(data['username'], style: GoogleFonts.poppins(fontSize: 16)),
-                        Text(
-                          '@' + data['username'], 
-                          style: GoogleFonts.poppins(
-                            fontSize: 11, 
-                            color: const Color(0xFF838383)
-                          )
-                        )
-                      ],
-                    );
-                  }
-
-                  return const Text("loading");
-                })
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(AuthenticationService.userInfo != null ? AuthenticationService.userInfo!.username : "missing_name", style: GoogleFonts.poppins(fontSize: 16)),
+                  Text(
+                    '@' + (AuthenticationService.userInfo != null ? AuthenticationService.userInfo!.username : "missing_name"), 
+                    style: GoogleFonts.poppins(
+                      fontSize: 11, 
+                      color: const Color(0xFF838383)
+                    )
+                  )
+                ],
               )
             ],
           ),
@@ -188,7 +218,7 @@ class ProfilePage extends StatelessWidget{
     );
   }
 
-  Widget aboutUsBox(double height, double width){
+  Widget infoBox(double height, double width, List<Widget> items){
     return Container(
       width: width * .844,
       decoration: BoxDecoration(
@@ -197,9 +227,7 @@ class ProfilePage extends StatelessWidget{
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          boxEntry("Acknowledgements", 'assets/icons/profile/heart.svg', width, height),
-        ],
+        children: items
       )
     );
   }
@@ -226,25 +254,36 @@ class ProfilePage extends StatelessWidget{
     );
   }
 
-  Widget boxEntry(String title, String imagePath, double deviceWidth, double deviceHeight) {
-    return Container(
-      width: deviceWidth * .75,
-      padding: const EdgeInsets.symmetric(vertical: 14),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Row(
-          children: [
-            Padding(
-              child: SvgPicture.asset(imagePath),
-              padding: const EdgeInsets.only(right: 4)
-            ),
-            Text(
-              title,
-              style: GoogleFonts.poppins(
-                fontSize: 14
+  Widget boxEntry(String title, String imagePath, Function onPress, double deviceWidth, double deviceHeight) {
+    return ElevatedButton(
+      style: ButtonStyle(
+        overlayColor: MaterialStateProperty.all<Color>(Color(0x1FE0E0E0)),
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+        elevation: MaterialStateProperty.all<double>(0),
+      ),
+      onPressed: () {
+        onPress();
+      },
+      child: Container(
+        width: deviceWidth * .75,
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Row(
+            children: [
+              Padding(
+                child: SvgPicture.asset(imagePath),
+                padding: const EdgeInsets.only(right: 4)
               ),
-            )
-          ],
+              Text(
+                title,
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Colors.black
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

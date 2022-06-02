@@ -9,15 +9,15 @@ class Store extends Equatable {
   final String description;
   final String ownerId;
   final GeoFirePoint location;
-
-  
+  final List<String> announcements;
 
   Store({
     required this.id,
     required this.name,
     required this.description,
     required this.ownerId,
-    required this.location
+    required this.location,
+    required this.announcements
   });
 
   @override
@@ -38,7 +38,8 @@ class Store extends Equatable {
         latitude: data?['location']['geopoint'].latitude, 
         longitude: data?['location']['geopoint'].longitude
       ),
-      ownerId: data?['ownerId']
+      ownerId: data?['ownerId'],
+      announcements: data?['announcements']
       // regions:
       //     data?['regions'] is Iterable ? List.from(data?['regions']) : null,
     );
@@ -50,7 +51,8 @@ class Store extends Equatable {
       if (name != null) "name": name,
       if (description != null) "description": description,
       if (location != null) "location": location.data,
-      if (ownerId != null) "ownerId": ownerId
+      if (ownerId != null) "ownerId": ownerId,
+      if (announcements != null) "announcements": announcements
     };
   }
 }

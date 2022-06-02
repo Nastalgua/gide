@@ -1,20 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:gide/core/constants/route_constants.dart';
 import 'package:gide/core/models/credit_model.dart';
-import 'package:gide/core/models/store_model.dart';
-import 'package:gide/core/models/user_model.dart' as self_module;
-import 'package:gide/core/services/auth_service.dart';
-import 'package:gide/core/services/store_service.dart';
 import 'package:gide/screens/auth/page/favorites.dart';
-import 'package:gide/screens/auth/page/login_page.dart';
-import 'package:gide/screens/auth/page/Announcements.dart';
+import 'package:gide/screens/auth/page/new_main.dart';
+import 'package:gide/screens/auth/page/profile.dart';
+import 'package:uuid/uuid.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gide/screens/auth/bloc/auth_bloc.dart';
-import 'package:uuid/uuid.dart';
 
 enum Page {
   home,
@@ -31,9 +26,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _currentIndex = 0;
+  int _currentIndex = 3;
 
-  final PageController _pageController = PageController(initialPage: 0);
+  final PageController _pageController = PageController(initialPage: 3);
   final Color _activeColor = Colors.pink;
   final Color _disableColor = Colors.black45;
 
@@ -52,74 +47,79 @@ class _HomeState extends State<Home> {
           'assets/icons/navbar/pin-svgrepo-com 1.svg'
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 15,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Container(
-            height: 55,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    _pageController.animateToPage(
-                      Page.home.index, 
-                      duration: const Duration(milliseconds: 500), 
-                      curve: Curves.ease
-                    );
-                  }, 
-                  icon: SvgPicture.asset(
-                    'assets/icons/navbar/home-svgrepo-com 1.svg',
-                    color: (_currentIndex == Page.home.index) ? _activeColor : _disableColor,
-                  )
-                ),
-                IconButton(
-                  onPressed: () {
-                    _pageController.animateToPage(
-                      Page.notifications.index, 
-                      duration: const Duration(milliseconds: 500), 
-                      curve: Curves.ease
-                    );
-                  }, 
-                  icon: SvgPicture.asset(
-                    'assets/icons/navbar/bell.svg',
-                    color: (_currentIndex == Page.notifications.index) ? _activeColor : _disableColor,
-                  )
-                ),
-                Container(width: MediaQuery.of(context).size.width * 0.2),
-                IconButton(
-                  onPressed: () {
-                    _pageController.animateToPage(
-                      Page.favorites.index, 
-                      duration: const Duration(milliseconds: 500), 
-                      curve: Curves.ease
-                    );
-                  }, 
-                  icon: SvgPicture.asset(
-                    'assets/icons/navbar/bookmark.svg',
-                    color: (_currentIndex == Page.favorites.index) ? _activeColor : _disableColor,
-                  )
-                ),
-                IconButton(
-                  onPressed: () {
-                    _pageController.animateToPage(
-                      Page.profile.index, 
-                      duration: const Duration(milliseconds: 500), 
-                      curve: Curves.ease
-                    );
-                  }, 
-                  icon: SvgPicture.asset(
-                    'assets/icons/navbar/person.svg',
-                    color: (_currentIndex == Page.profile.index) ? _activeColor : _disableColor,
-                  )
-                ),
-              ],
-            ),
-          )
-        ),
-      )
+      bottomNavigationBar: _createBottomNavigationBar()
+    );
+  }
+
+  Widget _createBottomNavigationBar() {
+    return BottomAppBar(
+      shape: const CircularNotchedRectangle(),
+      elevation: 0,
+      notchMargin: 15,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: SizedBox(
+          height: 55,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                onPressed: () {
+                  _pageController.animateToPage(
+                    Page.home.index, 
+                    duration: const Duration(milliseconds: 500), 
+                    curve: Curves.ease
+                  );
+                }, 
+                icon: SvgPicture.asset(
+                  'assets/icons/navbar/home-svgrepo-com 1.svg',
+                  color: (_currentIndex == Page.home.index) ? _activeColor :_disableColor,
+                )
+              ),
+              IconButton(
+                onPressed: () {
+                  _pageController.animateToPage(
+                    Page.notifications.index, 
+                    duration: const Duration(milliseconds: 500), 
+                    curve: Curves.ease
+                  );
+                }, 
+                icon: SvgPicture.asset(
+                  'assets/icons/navbar/bell.svg',
+                  color: (_currentIndex == Page.notifications.index) ?_activeColor : _disableColor,
+                )
+              ),
+              Container(width: MediaQuery.of(context).size.width * 0.2),
+              IconButton(
+                onPressed: () {
+                  _pageController.animateToPage(
+                    Page.favorites.index, 
+                    duration: const Duration(milliseconds: 500), 
+                    curve: Curves.ease
+                  );
+                }, 
+                icon: SvgPicture.asset(
+                  'assets/icons/navbar/bookmark.svg',
+                  color: (_currentIndex == Page.favorites.index) ? _activeColor: _disableColor,
+                )
+              ),
+              IconButton(
+                onPressed: () {
+                  _pageController.animateToPage(
+                    Page.profile.index, 
+                    duration: const Duration(milliseconds: 500), 
+                    curve: Curves.ease
+                  );
+                }, 
+                icon: SvgPicture.asset(
+                  'assets/icons/navbar/person.svg',
+                  color: (_currentIndex == Page.profile.index) ? _activeColor :_disableColor,
+                )
+              ),
+            ],
+          ),
+        )
+      ),
     );
   }
 
@@ -134,11 +134,11 @@ class _HomeState extends State<Home> {
           });
         },
         children: [
-          BlueScreen(),
+          MainPage(),
           GreenScreen(),
           FavoritesPage(),
-          // ProfilePage(),
-          YellowScreen()
+          ProfilePage(),
+          // YellowScreen()
         ],
       ),
     );
@@ -190,12 +190,12 @@ class YellowScreen extends StatelessWidget {
       child: IconButton(icon: Icon(Icons.logout), onPressed: () {
 
         // TODO finish this
-        Credit credit = Credit(
-          id: const Uuid().v4(), 
-          expireDate: Timestamp.fromDate(DateTime(2022, 6, 2)), 
-          storeId: "3f6b5aa0-a14f-45d3-aff2-79a59b73bbca", 
-          amtOff: 0.5
-        );
+        // Credit credit = Credit(
+        //   id: const Uuid().v4(), 
+        //   expireDate: Timestamp.fromDate(DateTime(2022, 6, 2)), 
+        //   storeId: "3f6b5aa0-a14f-45d3-aff2-79a59b73bbca", 
+        //   amtOff: 0.5
+        // );
 
         // Store store = Store(
         //   id: const Uuid().v4(),
@@ -206,7 +206,7 @@ class YellowScreen extends StatelessWidget {
         // );
 
         // StoreSerice.updateStore(store);
-        // context.read<AuthBloc>().add(LogoutUser());
+        context.read<AuthBloc>().add(LogoutUser());
       },),
     );
   }

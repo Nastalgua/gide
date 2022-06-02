@@ -13,6 +13,8 @@ class AuthenticationService {
 
   static CollectionReference users = FirebaseFirestore.instance.collection('users');
 
+  static User? userInfo;
+
   static Future<firebase_auth_module.User?> loginWithGoogle() async {
     final google_module.GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
@@ -63,6 +65,22 @@ class AuthenticationService {
 
   static firebase_auth_module.User? getCurrentUser() {
     return firebase_auth_module.FirebaseAuth.instance.currentUser;
+  }
+
+  static Future<User> setUserInfo() async {
+    var currUser = getCurrentUser()!;
+
+    var snapshot = await users.doc(currUser.uid).get();
+
+    User infoUser = User.fromFirestore(snapshot as DocumentSnapshot<Map<String, dynamic>>, null);
+
+    userInfo = infoUser;
+
+    return infoUser;
+  }
+
+  static void removeUserInfo() {
+    userInfo = null;
   }
 
   static Future firebaseLogout() async {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import "package:flutter/services.dart";
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gide/screens/auth/bloc/auth_bloc.dart';
 import 'package:gide/core/constants/colors_constants.dart';
@@ -11,7 +10,6 @@ import 'package:flutter_config/flutter_config.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await FlutterConfig.loadEnvVariables();
 
   if (Firebase.apps.isEmpty) {
     await Firebase.initializeApp();
