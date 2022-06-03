@@ -18,7 +18,7 @@ class _BaseState extends State<Base> {
     return StreamBuilder(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        print("auth changes");
+        
         
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -28,6 +28,8 @@ class _BaseState extends State<Base> {
           context.read<AuthBloc>().add(LoadAuth());
           return const Home();
         }
+        
+        print("auth changes");
 
         return const LoginPage();
       },

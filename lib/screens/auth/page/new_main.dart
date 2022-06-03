@@ -34,7 +34,6 @@ class _MainPageState extends State<MainPage>{
                   child: Column(
                     //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildTextField(context),
                       _buildFavStorePromotion(context),
                       _buildAnnouncements(context)
                     ],

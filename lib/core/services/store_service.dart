@@ -18,4 +18,12 @@ class StoreSerice {
       toFirestore: (Store store, options) => store.toFirestore(),
     ).set(store);
   }
+
+  static Future<Store> findStoreById(String id) async {
+    var snapshot = await stores.doc(id).get();
+
+    Store store = Store.fromFirestore(snapshot as DocumentSnapshot<Map<String, dynamic>>, null);
+
+    return store;
+  }
 }

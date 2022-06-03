@@ -4,8 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:gide/core/constants/route_constants.dart';
 import 'package:gide/core/models/store_model.dart';
+import 'package:gide/core/models/user_model.dart';
 import 'package:gide/core/services/auth_service.dart';
 import 'package:gide/core/services/store_service.dart';
+import 'package:gide/core/services/user_service.dart';
 import 'package:uuid/uuid.dart';
 
 class CreateStore extends StatefulWidget {
@@ -101,8 +103,8 @@ class _CreateStoreState extends State<CreateStore> {
         onChanged:(value) {
           onChange(value);
         },
-        inputFormatters: numOnly ? <TextInputFormatter>[
-          FilteringTextInputFormatter.digitsOnly,
+        inputFormatters: numOnly ? [
+          FilteringTextInputFormatter(RegExp(r'(^\-?\d*\.?\d*)'), allow: true)
         ] : [],
         decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
@@ -153,19 +155,31 @@ class _CreateStoreState extends State<CreateStore> {
 
   void _createStore() {
     if (lat != null && lng != null && name.isNotEmpty && description.isNotEmpty) {
-      print("create");
+      print(geo.point(latitude: lat!, longitude: lng!));
       Store store = Store(
         id: const Uuid().v4(),
         name: name,
         description: description,
         ownerId: AuthenticationService.getCurrentUser()!.uid,
         location: geo.point(latitude: lat!, longitude: lng!),
-        announcements: const []
+        announcements: const [],
+        items: const []
       );
 
       StoreSerice.updateStore(store);
 
-      Navigator.of(context).pushNamed(storeRoute);
+      User currUser = AuthenticationService.userInfo!;
+      User tempUser = User(
+        id: currUser.id, 
+        username: currUser.username, 
+        credits: currUser.credits, 
+        favoriteStores: currUser.favoriteStores,
+        storeId: store.id
+      );
+
+      UserService.updateUser(tempUser);
+
+      Navigator.of(context).pop();
 
       return;
     }

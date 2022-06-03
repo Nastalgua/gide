@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gide/core/base.dart';
 
 import 'package:gide/core/constants/route_constants.dart';
+import 'package:gide/core/models/store_model.dart';
 
 // UIs
 import 'package:gide/screens/place_locator/place_locator.dart';
@@ -16,8 +17,6 @@ import 'package:gide/screens/store/page/store_page.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    final args = settings.arguments;
-
     switch (settings.name) {
       case homeViewRoute:
         return MaterialPageRoute(
@@ -35,7 +34,10 @@ class RouteGenerator {
       case profileRoute:
         return MaterialPageRoute(builder: (_) => const ProfilePage());
       case storeRoute:
-        return MaterialPageRoute(builder: (_) => const StorePage());
+        final store = settings.arguments as Store;
+        return MaterialPageRoute(builder: (_) => StorePage(
+          store: store,
+        ));
       case createStoreRoute:
         return MaterialPageRoute(builder: (_) => const CreateStore());
       case mainRoute:

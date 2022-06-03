@@ -31,6 +31,7 @@ class AuthenticationService {
       User user = User(
         id: response.user!.uid, 
         username: response.user!.displayName!, 
+        storeId: null,
         credits: const [],
         favoriteStores: const []
       );
@@ -54,6 +55,7 @@ class AuthenticationService {
     User user = User(
       id: credential.user!.uid, 
       username: username,
+      storeId: null,
       credits: const [],
       favoriteStores: const []
     );
