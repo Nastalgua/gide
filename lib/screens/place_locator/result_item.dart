@@ -23,8 +23,8 @@ class ResultItem extends StatelessWidget {
             width: width,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(11),
-              child: Image.asset(
-                'assets/images/noodles.png',
+              child: Image.network(
+                store.coverImageLink,
                 fit: BoxFit.cover
               ),
             ),

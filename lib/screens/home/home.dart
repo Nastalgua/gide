@@ -4,9 +4,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:gide/core/constants/route_constants.dart';
 import 'package:gide/core/models/credit_model.dart';
-import 'package:gide/screens/auth/page/favorites.dart';
-import 'package:gide/screens/auth/page/new_main.dart';
-import 'package:gide/screens/auth/page/profile.dart';
+import 'package:gide/screens/home/page/credits.dart';
+import 'package:gide/screens/home/page/favorites.dart';
+import 'package:gide/screens/home/page/new_main.dart';
+import 'package:gide/screens/home/page/profile.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gide/screens/auth/bloc/auth_bloc.dart';
@@ -135,7 +136,8 @@ class _HomeState extends State<Home> {
         },
         children: [
           MainPage(),
-          GreenScreen(),
+          // GreenScreen(),
+          CreditsPage(),
           FavoritesPage(),
           ProfilePage(),
           // YellowScreen()

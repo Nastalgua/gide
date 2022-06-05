@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gide/core/models/announcement_model.dart';
+import 'package:gide/core/models/item_model.dart';
 import 'package:gide/core/models/store_model.dart';
 import 'package:gide/core/services/auth_service.dart';
 import 'package:gide/core/services/store_service.dart';
-import 'package:gide/screens/auth/page/favorites.dart';
+import 'package:gide/screens/home/page/favorites.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -18,10 +20,7 @@ class StorePage extends StatefulWidget {
 }
 
 class _StorePageState extends State<StorePage> with TickerProviderStateMixin {
-  String _announcement = "";
   var _storeStream;
-
-  final fieldText = TextEditingController();
 
   bool isOwner() {
     return widget.store.ownerId == AuthenticationService.getCurrentUser()!.uid;
@@ -32,7 +31,6 @@ class _StorePageState extends State<StorePage> with TickerProviderStateMixin {
     // TODO: implement initState
     super.initState();
     _storeStream = FirebaseFirestore.instance.collection('stores').doc(widget.store.id).snapshots();
-    _announcement = "";
   }
 
   @override
@@ -52,9 +50,9 @@ class _StorePageState extends State<StorePage> with TickerProviderStateMixin {
               children: [
                 Container(
                   height: height * 0.25,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/nippon_cha.jpg'),
+                      image: NetworkImage(widget.store.coverImageLink),
                       fit: BoxFit.cover
                     )
                   ),
@@ -139,73 +137,9 @@ class _StorePageState extends State<StorePage> with TickerProviderStateMixin {
                 child: TabBarView(
                   controller: _tabController,
                   children: [
-                    Column(
-                      children: [
-                        isOwner() ? createAnnouncementField(width) : Container(),
-                        StreamBuilder<Object>(
-                          stream: _storeStream,
-                          builder: (context, snapshot) {
-                            
-                            if (snapshot.hasError) {
-                              return const Text('Something went wrong');
-                            }
-
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return const Text("Loading");
-                            }
-                            var d = snapshot.data as DocumentSnapshot;
-                            
-                            // print(d.data());
-                            Store store = Store.fromFirestore(snapshot.data as DocumentSnapshot<Map<String, dynamic>>, null);
-
-                            List<Announcement> announcementReversed = store.announcements!.reversed.toList();
-
-                            return ScrollConfiguration(
-                              behavior: MyBehavior(),
-                              child: Expanded(
-                                child: ListView.separated(
-                                  padding: const EdgeInsets.only(top: 20, bottom: 20),
-                                  shrinkWrap: true,
-                                  itemBuilder: (context, index) { 
-                                    return announcementTab(//todo: announcement & date of announcement from firebase
-                                      announcementReversed[index].text,
-                                      _createDate(announcementReversed[index].timestamp.toDate())
-                                    );
-                                  },
-                                  separatorBuilder: (context, index) {
-                                    return const SizedBox(height: 10);
-                                  },
-                                  itemCount: announcementReversed.length,
-                                ),
-                              ),
-                            );
-                          }
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        isOwner() ? createItemButton() : Container(),
-                        ScrollConfiguration(
-                          behavior: MyBehavior(),
-                          child: ListView.separated(
-                            shrinkWrap: true,
-                            padding: EdgeInsets.zero,
-                            itemBuilder: (context, index) {
-                              return itemTab(//todo: item name & description from firebase
-                                widget.store.items![index].name,
-                                widget.store.items![index].description,
-                                widget.store.items![index].imageLink,
-                                height,
-                                width//todo: add a way to pass img src
-                              );
-                            },
-                            separatorBuilder: (context, index) => const SizedBox(height: 10),
-                            itemCount: widget.store.items!.length
-                          ),
-                        ),
-                      ],
-                    ), 
+                    _AnnouncementTab(store: widget.store, isOwner: isOwner(), storeStream: _storeStream),
+                    // _AnnouncementTab(store: widget.store, isOwner: isOwner(), storeStream: _storeStream),
+                    _ItemsTab(isOwner: isOwner(), store: widget.store), 
                     _MapTab(store: widget.store)
                   ],
                 ),
@@ -216,23 +150,96 @@ class _StorePageState extends State<StorePage> with TickerProviderStateMixin {
       ),
     );
   }
+}
+
+class _AnnouncementTab extends StatefulWidget {
+  final Store store;
+  final bool isOwner;
+  final storeStream;
+
+  const _AnnouncementTab({ Key? key, required this.store, required this.isOwner, required this.storeStream }) : super(key: key);
+
+  @override
+  State<_AnnouncementTab> createState() => _AnnouncementTabState();
+}
+
+class _AnnouncementTabState extends State<_AnnouncementTab> with AutomaticKeepAliveClientMixin {
+  final fieldText = TextEditingController(); 
+  String _announcement = "";
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _announcement = "";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        widget.isOwner ? createAnnouncementField(MediaQuery.of(context).size.width) : Container(),
+        StreamBuilder<Object>(
+          stream: widget.storeStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Text('Something went wrong');
+            }
+            
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Text("Loading");
+            }
+
+            Store store = Store.fromFirestore(snapshot.data as DocumentSnapshot<Map<String, dynamic>>, null);
+
+            List<Announcement> announcementReversed = store.announcements!.reversed.toList();
+
+            return announcementReversed.isNotEmpty ? ScrollConfiguration(
+              behavior: MyBehavior(),
+              child: Expanded(
+                child: ListView.separated(
+                  padding: const EdgeInsets.only(top: 20, bottom: 20),
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) { 
+                    return announcementTab(//todo: announcement & date of announcement from firebase
+                      announcementReversed[index].text,
+                      _createDate(announcementReversed[index].timestamp.toDate())
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(height: 10);
+                  },
+                  itemCount: announcementReversed.length,
+                ),
+              ),
+            ) : Container(
+              margin: const EdgeInsets.only(top: 80),
+              child: Column(
+                children: [
+                  SvgPicture.asset('assets/icons/empty-box.svg'),
+                  Container(
+                    margin: EdgeInsets.only(top: 10),
+                    child: Text(
+                      "There is nothing here...", 
+                      style: GoogleFonts.poppins(
+                        fontSize: 15, color: Color(0xFFC0C0C0)
+                      )
+                    )
+                  )
+                ],
+              )
+            );
+          }
+        ),
+      ],
+    );
+  }
 
   String _createDate(DateTime date) {
     return "${date.month}/${date.day}/${date.year}";
-  }
-
-  Widget createItemButton() {
-    return ElevatedButton(
-      onPressed: () {}, 
-      child: Container(
-        margin: const EdgeInsets.only(top: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: const Color(0xFFFFFFFF)
-        ),
-        height: MediaQuery.of(context).size.height * 0.05,
-      )
-    );
   }
 
   Widget createAnnouncementField(double width) {
@@ -292,6 +299,7 @@ class _StorePageState extends State<StorePage> with TickerProviderStateMixin {
                   name: widget.store.name, 
                   description: widget.store.description, 
                   ownerId: widget.store.ownerId, 
+                  coverImageLink: widget.store.coverImageLink,
                   location: widget.store.location, 
                   announcements: announcements, 
                   items: widget.store.items
@@ -357,7 +365,108 @@ class _StorePageState extends State<StorePage> with TickerProviderStateMixin {
       ),
     );
   }
+}
 
+class _ItemsTab extends StatefulWidget {
+  final bool isOwner;
+  final Store store;
+
+  _ItemsTab({ Key? key, required this.isOwner, required this.store }) : super(key: key);
+
+  @override
+  State<_ItemsTab> createState() => _ItemsTabState();
+}
+
+class _ItemsTabState extends State<_ItemsTab> {
+  var _storeStream;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _storeStream = FirebaseFirestore.instance.collection('stores').doc(widget.store.id).snapshots();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        widget.isOwner ? createItemButton() : Container(),
+        StreamBuilder<Object>(
+          stream: _storeStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Text('Something went wrong');
+            }
+            
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Text("Loading");
+            }
+
+            Store store = Store.fromFirestore(snapshot.data as DocumentSnapshot<Map<String, dynamic>>, null);
+            List<Item> itemsReversed = store.items!.reversed.toList();
+
+            return itemsReversed.isNotEmpty ? ScrollConfiguration(
+              behavior: MyBehavior(),
+              child: ListView.separated(
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                itemBuilder: (context, index) {
+                  return itemTab(//todo: item name & description from firebase
+                    itemsReversed[index].name,
+                    itemsReversed[index].description,
+                    itemsReversed[index].imageLink,
+                    MediaQuery.of(context).size.height,
+                    MediaQuery.of(context).size.width//todo: add a way to pass img src
+                  );
+                },
+                separatorBuilder: (context, index) => const SizedBox(height: 10),
+                itemCount: itemsReversed.length
+              ),
+            ) : Container(
+              margin: const EdgeInsets.only(top: 100),
+              child: Column(
+                children: [
+                  SvgPicture.asset('assets/icons/empty-box.svg'),
+                  Container(
+                    margin: EdgeInsets.only(top: 10),
+                    child: Text(
+                      "There is nothing here...", 
+                      style: GoogleFonts.poppins(
+                        fontSize: 15, color: Color(0xFFC0C0C0)
+                      )
+                    )
+                  )
+                ],
+              )
+            );
+          }
+        ),
+      ],
+    );
+  }
+
+  Widget createItemButton() {
+    return ElevatedButton(
+      style: ButtonStyle(
+        overlayColor: MaterialStateProperty.all<Color>(Color(0x1FE0E0E0)),
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+      ),
+      onPressed: () {
+
+      }, 
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Text(
+          "+ Create Item",
+          style: GoogleFonts.poppins(color: Colors.black),
+        ),
+      )
+    );
+  }
+  
   Widget itemTab(String name, String desc, String imageLink, double height, double width){
     return Container(
       width: width,

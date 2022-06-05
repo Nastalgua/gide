@@ -34,4 +34,15 @@ class Item extends Equatable {
       if (imageLink != null) "expireDate": imageLink,
     };
   }
+
+  Item.fromJson(Map<String, dynamic> json)
+      : name = json['name'],
+        description = json['description'],
+        imageLink = json['imageLink'];
+
+  Map<String, dynamic> toJson() => {
+    'name': name,
+    'description': description,
+    'imageLink': imageLink,
+  };
 }

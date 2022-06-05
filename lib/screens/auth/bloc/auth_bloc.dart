@@ -18,7 +18,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       
       if (resUser != null) {
         self_module.User user = await AuthenticationService.setUserInfo();
-        
+          
         emit(AuthConfirmed(user: user));
       } else {
         emit(AuthMissing());

@@ -1,9 +1,17 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:gide/core/constants/route_constants.dart';
+import 'package:gide/core/models/credit_model.dart';
 import 'package:gide/core/models/store_model.dart';
+import 'package:gide/core/models/user_model.dart';
+import 'package:gide/core/services/auth_service.dart';
+import 'package:gide/core/services/user_service.dart';
 import 'package:gide/screens/place_locator/indicator.dart';
 import 'package:gide/screens/place_locator/result_item.dart';
+import 'package:uuid/uuid.dart';
 
 class BottomBar extends StatefulWidget {
   final List<Store> stores;
@@ -40,7 +48,48 @@ class _BottomBarState extends State<BottomBar> {
       left: 15,
       child: GestureDetector(
         onVerticalDragEnd: (dragUpdateDetails) { // TODO: Change the page here
-          Navigator.of(context).pushNamed(storeRoute);
+
+          if (widget.stores.length == 0) {
+            return;
+          }
+
+          double randomdouble = Random().nextDouble();
+
+          randomdouble = double.parse(randomdouble.toStringAsFixed(2));
+
+          Store store = widget.stores[widget.selectedIndex];
+
+          Credit credit = Credit(
+            id: const Uuid().v4(), 
+            expireDate: Timestamp.fromDate(DateTime(2022, 6, 2)), 
+            storeId: store.id, 
+            amtOff: randomdouble,
+            storeName: store.name
+          );
+
+          if (AuthenticationService.userInfo == null) return;
+
+          AuthenticationService.userInfo!.credits;
+          List<Credit> credits = AuthenticationService.userInfo != null ? [...AuthenticationService.userInfo!.credits!] : [];
+
+          credits.add(credit);
+
+          User tempUser = User(id: AuthenticationService.userInfo!.id, username: AuthenticationService.userInfo!.username, credits: credits, favoriteStores: AuthenticationService.userInfo!.favoriteStores);
+
+          UserService.updateUser(tempUser);
+
+          credits.clear();
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "Added credit of ${credit.amtOff} for ${store.name}."
+              )
+            )
+          );
+          
+          Navigator.of(context).pushNamed(storeRoute, arguments: widget.stores[widget.selectedIndex]);
+
         },
         child: Container(
           decoration: BoxDecoration(

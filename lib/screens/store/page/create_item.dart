@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
@@ -9,32 +6,26 @@ import 'package:gide/core/models/user_model.dart';
 import 'package:gide/core/services/auth_service.dart';
 import 'package:gide/core/services/store_service.dart';
 import 'package:gide/core/services/user_service.dart';
-import 'package:gide/core/services/storage_service.dart';
 import 'package:uuid/uuid.dart';
 
-class CreateStore extends StatefulWidget {
-  const CreateStore({ Key? key }) : super(key: key);
+class CreateItem extends StatefulWidget {
+  const CreateItem({ Key? key }) : super(key: key);
 
   @override
-  State<CreateStore> createState() => _CreateStoreState();
+  State<CreateItem> createState() => _CreateItemState();
 }
 
-class _CreateStoreState extends State<CreateStore> {
+class _CreateItemState extends State<CreateItem> {
   String name = "";
   String description = "";
 
   double? lat = null;
   double? lng = null;
 
-  String? path = null;
-  String? fileName = null;
-
   final geo = Geoflutterfire();
 
   @override
   Widget build(BuildContext context) {
-    final StorageService storage = StorageService(); 
-
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -92,36 +83,9 @@ class _CreateStoreState extends State<CreateStore> {
                     ),
                   ],
                 ),
-                path != null ? Expanded(child: Image.file(File(path!))) : Container(),
-                ElevatedButton(
-                  onPressed: () async {
-                    final results = await FilePicker.platform.pickFiles(
-                      allowMultiple: false,
-                      type: FileType.image,
-                      // allowedExtensions: ['png', 'jpeg']
-                    );
-
-                    if (results == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("No image selected..."))
-                      );
-
-                      return;
-                    }
-
-                    setState(() {
-                      path = results.files.single.path!;
-                      fileName = results.files.single.name;
-                    });
-                  }, 
-                  child: Text("Upload image")
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    _createStore();
-                  }, 
-                  child: Text("Create store")
-                ),
+                TextButton(onPressed: () {
+                  // _createStore();
+                }, child: Text("Create Store"))
               ],
             ),
           ),
@@ -187,21 +151,15 @@ class _CreateStoreState extends State<CreateStore> {
     );
   }
 
-  void _createStore() async {
-    final StorageService storage = StorageService(); 
-
-    if (lat != null && lng != null && path != null && fileName != null && name.isNotEmpty && description.isNotEmpty) {
-      storage.uploadFile(path!, fileName!)
-                      .then((value) => print("Done"));
-
-      final imageDownloadLink = await storage.downloadURL(fileName!);
-
+  /*
+  void _createStore() {
+    if (lat != null && lng != null && name.isNotEmpty && description.isNotEmpty) {
+      print(geo.point(latitude: lat!, longitude: lng!));
       Store store = Store(
         id: const Uuid().v4(),
         name: name,
         description: description,
         ownerId: AuthenticationService.getCurrentUser()!.uid,
-        coverImageLink: imageDownloadLink,
         location: geo.point(latitude: lat!, longitude: lng!),
         announcements: const [],
         items: const []
@@ -239,4 +197,5 @@ class _CreateStoreState extends State<CreateStore> {
       barrierDismissible: true
     );
   }
+  */
 }

@@ -3,15 +3,16 @@ import 'package:gide/core/base.dart';
 
 import 'package:gide/core/constants/route_constants.dart';
 import 'package:gide/core/models/store_model.dart';
+import 'package:gide/screens/home/page/qr_code_result.dart';
 
 // UIs
 import 'package:gide/screens/place_locator/place_locator.dart';
 import 'package:gide/screens/home/home.dart';
 import 'package:gide/screens/auth/page/login_page.dart';
 import 'package:gide/screens/auth/page/sign_up_page.dart';
-import 'package:gide/screens/auth/page/favorites.dart';
-import 'package:gide/screens/auth/page/profile.dart';
-import 'package:gide/screens/auth/page/new_main.dart';
+import 'package:gide/screens/home/page/favorites.dart';
+import 'package:gide/screens/home/page/profile.dart';
+import 'package:gide/screens/home/page/new_main.dart';
 import 'package:gide/screens/store/page/create_store.dart';
 import 'package:gide/screens/store/page/store_page.dart';
 
@@ -42,6 +43,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const CreateStore());
       case mainRoute:
         return MaterialPageRoute(builder: (_) => MainPage());
+      case qrCodeResultRoute:
+        return MaterialPageRoute(builder: (_) => const QRCodeResultPage());
       default:
         return _errorRoute();
     }

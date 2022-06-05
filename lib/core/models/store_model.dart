@@ -9,6 +9,7 @@ class Store extends Equatable {
   final String name;
   final String description;
   final String ownerId;
+  final String coverImageLink;
   final GeoFirePoint location;
   final List<Announcement>? announcements;
   final List<Item>? items;
@@ -18,6 +19,7 @@ class Store extends Equatable {
     required this.name,
     required this.description,
     required this.ownerId,
+    required this.coverImageLink,
     required this.location,
     required this.announcements,
     required this.items
@@ -38,6 +40,11 @@ class Store extends Equatable {
       announcementConverted = data?['announcements']!.map<Announcement>((e) => Announcement.fromJson(e)).toList();
     }
 
+    List<Item> itemsConverted = [];
+    if (data?['items'] != null) {
+      itemsConverted = data?['items']!.map<Item>((e) => Item.fromJson(e)).toList();
+    }
+
     return Store(
       id: data?['id'],
       name: data?['name'],
@@ -47,8 +54,9 @@ class Store extends Equatable {
         longitude: data?['location']['geopoint'].longitude
       ),
       ownerId: data?['ownerId'],
+      coverImageLink: data?['coverImageLink'],
       announcements: data?['announcements'] is Iterable ? announcementConverted : null,
-      items: data?['items'] is Iterable ? List.from(data?['items']) : null
+      items: data?['items'] is Iterable ? itemsConverted : null
       // regions:
       //     data?['regions'] is Iterable ? List.from(data?['regions']) : null,
     );
@@ -60,14 +68,20 @@ class Store extends Equatable {
       announcementConverted = announcements!.map((e) => e.toJson()).toList();
     }
 
+    List<Map<String, Object?>> itemsConverted = [];
+    if (items != null) {
+      itemsConverted = items!.map((e) => e.toJson()).toList();
+    }
+
     return {
       if (id != null) "id": id,
       if (name != null) "name": name,
       if (description != null) "description": description,
       if (location != null) "location": location.data,
       if (ownerId != null) "ownerId": ownerId,
-      if (announcements != null) "announcements": announcementConverted, //(announcements == null ? announcements : announcements!.map((e) => e.toJson())),
-      if (items != null) "items": items
+      if (coverImageLink != null) "coverImageLink": coverImageLink,
+      if (announcements != null) "announcements": announcementConverted,
+      if (items != null) "items": itemsConverted
     };
   }
 }

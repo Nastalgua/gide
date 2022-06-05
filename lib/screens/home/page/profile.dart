@@ -16,7 +16,7 @@ import 'package:uuid/uuid.dart';
 
 class ProfilePage extends StatelessWidget{
   const ProfilePage({Key? key}) : super(key: key);
-  
+
   Widget build(BuildContext context){
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
@@ -24,6 +24,10 @@ class ProfilePage extends StatelessWidget{
     var user = AuthenticationService.getCurrentUser()!;
 
     final geo = Geoflutterfire();
+
+    if (AuthenticationService.userInfo != null) {
+      context.read<AuthBloc>().add(LoadAuth());
+    }
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -119,17 +123,16 @@ class ProfilePage extends StatelessWidget{
                           },
                           width, 
                           height
-                        ) : Container()
+                        ) : boxEntry(
+                          "Create store", 
+                          'assets/icons/profile/plus.svg', 
+                          () {
+                            Navigator.of(context).pushNamed(createStoreRoute);
+                          },
+                          width, 
+                          height
+                        )
                       ),
-                      (AuthenticationService.userInfo != null && AuthenticationService.userInfo!.storeId == null) ? boxEntry(
-                        "Create store", 
-                        'assets/icons/profile/plus.svg', 
-                        () {
-                          Navigator.of(context).pushNamed(createStoreRoute);
-                        },
-                        width, 
-                        height
-                      ) : Container(),
                     ]
                   ),
                 ],
@@ -229,7 +232,7 @@ class ProfilePage extends StatelessWidget{
                   padding: const EdgeInsets.only(right: 8),
                   child: SvgPicture.asset('assets/icons/profile/qrcode.svg'),
                 ),
-                Text('QR Code', style: GoogleFonts.poppins())
+                Text('Scan QR Code', style: GoogleFonts.poppins())
               ],
             )
           ),

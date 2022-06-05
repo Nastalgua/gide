@@ -7,3 +7,5 @@ const String profileRoute = '/profile';
 const String mainRoute = '/main';
 const String storeRoute = '/store';
 const String createStoreRoute = '/create-store';
+const String createItemRoute = '/create-item';
+const String qrCodeResultRoute = '/qr-code-result';

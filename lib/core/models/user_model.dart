@@ -25,23 +25,35 @@ class User extends Equatable {
     SnapshotOptions? options,
   ) {
     final data = snapshot.data();
+
+    List<Credit> creditsConverted = [];
+    if (data?['credits'] != null) {
+      creditsConverted = data?['credits']!.map<Credit>((e) => Credit.fromJson(e)).toList();
+    }
+
     return User(
       id: data?['id'],
       username: data?['username'],
       storeId: data?['storeId'],
       credits:
-        data?['credits'] is Iterable ? List.from(data?['credits']) : null,
+        data?['credits'] is Iterable ? creditsConverted : null,
       favoriteStores: 
         data?['favoriteStores'] is Iterable ? List.from(data?['favoriteStores']) : null,
     );
   }
 
   Map<String, dynamic> toFirestore() {
+    List<Map<String, Object?>> creditsConverted = [];
+
+    if (credits != null) {
+      creditsConverted = credits!.map((e) => e.toJson()).toList();
+    }
+
     return {
       if (id != null) "id": id,
       if (username != null) "username": username,
       if (storeId != null) "storeId": storeId,
-      if (credits != null) "credits": credits,
+      if (credits != null) "credits": creditsConverted,
       if (favoriteStores != null) "favoriteRestaurants": favoriteStores
     };
   }

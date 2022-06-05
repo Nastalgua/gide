@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:gide/core/models/store_model.dart';
-import 'package:gide/screens/auth/page/favorites.dart';
+import 'package:gide/screens/home/page/favorites.dart';
 import 'package:gide/screens/place_locator/bottom_bar.dart';
 import 'package:gide/screens/place_locator/filter_item.dart';
 
@@ -150,6 +150,7 @@ class _PlaceLocatorState extends State<PlaceLocator> {
 
     _subscription = stream.listen((List<DocumentSnapshot> documentList) {
       documentList.forEach((doc) { 
+        print(doc.data());
         Store store = Store.fromFirestore(doc as DocumentSnapshot<Map<String, dynamic>>, null);
         _stores.add(store);
       });
@@ -226,13 +227,13 @@ class _PlaceLocatorState extends State<PlaceLocator> {
               ),
             ),
             _buildAppBar(),
-            BottomBar(
+            _stores.length > 0 ? BottomBar(
               stores: _stores,
               selectedIndex: _selectedIndex,
               updateSelectedIndex: updateSelectedIndex,
               pageController: _pageController,
               updateCameraPosition: updateCameraPosition
-            ),
+            ) : Container(),
           ],
         ),
       ),
