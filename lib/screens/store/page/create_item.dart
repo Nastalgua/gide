@@ -1,12 +1,18 @@
+//import 'dart:html';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:gide/core/models/item_model.dart';
 import 'package:gide/core/models/store_model.dart';
 import 'package:gide/core/models/user_model.dart';
 import 'package:gide/core/services/auth_service.dart';
+import 'package:gide/core/services/storage_service.dart';
 import 'package:gide/core/services/store_service.dart';
 import 'package:gide/core/services/user_service.dart';
 import 'package:uuid/uuid.dart';
+import 'dart:io';
 
 class CreateItem extends StatefulWidget {
   const CreateItem({ Key? key }) : super(key: key);
@@ -19,8 +25,8 @@ class _CreateItemState extends State<CreateItem> {
   String name = "";
   String description = "";
 
-  double? lat = null;
-  double? lng = null;
+  String? path = null;
+  String? fileName = null;
 
   final geo = Geoflutterfire();
 
@@ -31,11 +37,11 @@ class _CreateItemState extends State<CreateItem> {
         child: Center(
           child: Container(
             width: MediaQuery.of(context).size.width * 0.85,
-            padding: EdgeInsets.symmetric(vertical: 15),
+            padding: const EdgeInsets.symmetric(vertical: 15),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _buildTextField("Name of store...", (value) {
+                _buildTextField("Name of item...", (value) {
                   setState(() {
                     name = value;
                   });
@@ -45,47 +51,37 @@ class _CreateItemState extends State<CreateItem> {
                     description = value;
                   });
                 }),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 20),
-                        child: _buildTextField("Latitude", 
-                          (value) {
-                            setState(() {
-                              try {
-                                lat = double.parse(value);
-                              } catch (e) {
-                                lat = null;
-                              }
-                            });
-                          }, 
-                          true
-                        ),
-                      )
-                    ),
-                    Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.only(left: 20),
-                        child: _buildTextField("Longitude", 
-                          (value) {
-                            setState(() {
-                              try {
-                                lng = double.parse(value);
-                              } catch (e) {
-                                lng = null;
-                              }
-                            });
-                          }, 
-                          true
-                        ),
-                      )
-                    ),
-                  ],
+                path != null ? Expanded(child: Image.file(File(path!))) : Container(),
+                ElevatedButton(
+                    onPressed: () async {
+                      final results = await FilePicker.platform.pickFiles(
+                        allowMultiple: false,
+                        type: FileType.image,
+                        // allowedExtensions: ['png', 'jpeg']
+                      );
+
+                      if (results == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("No image selected..."))
+                        );
+
+                        return;
+                      }
+
+                      setState(() {
+                        path = results.files.single.path!;
+                        fileName = results.files.single.name;
+                      });
+                    },
+                    child: const Text("Upload image")
                 ),
-                TextButton(onPressed: () {
-                  // _createStore();
-                }, child: Text("Create Store"))
+                const SizedBox(height: 10,),
+                ElevatedButton(
+                    onPressed: () {
+                      _createItem();
+                    },
+                    child: const Text("Create item")
+                ),
               ],
             ),
           ),
@@ -151,21 +147,34 @@ class _CreateItemState extends State<CreateItem> {
     );
   }
 
-  /*
-  void _createStore() {
-    if (lat != null && lng != null && name.isNotEmpty && description.isNotEmpty) {
-      print(geo.point(latitude: lat!, longitude: lng!));
-      Store store = Store(
-        id: const Uuid().v4(),
+
+  void _createItem() async{
+    final StorageService storage = StorageService();
+    //Store store = Store.fromFirestore(snapshot.data as DocumentSnapshot<Map<String, dynamic>>, null);
+
+    if (name.isNotEmpty && description.isNotEmpty) {
+      storage.uploadFile(path!, fileName!).then((value) => print('Done'));
+
+      final imageDownloadLink = await storage.downloadURL(fileName!);
+
+      Item item = Item(
         name: name,
         description: description,
-        ownerId: AuthenticationService.getCurrentUser()!.uid,
-        location: geo.point(latitude: lat!, longitude: lng!),
-        announcements: const [],
-        items: const []
+        imageLink: imageDownloadLink
       );
 
-      StoreSerice.updateStore(store);
+      /*Store tempStore = Store(
+          id: widget.store.id,
+          name: widget.store.name,
+          description: widget.store.description,
+          ownerId: widget.store.ownerId,
+          coverImageLink: widget.store.coverImageLink,
+          location: widget.store.location,
+          announcements: widget.store.announcements,
+          items: item
+      );*/
+
+      //StoreSerice.updateStore(tempStore); todo: <-- error right here
 
       User currUser = AuthenticationService.userInfo!;
       User tempUser = User(
@@ -173,7 +182,7 @@ class _CreateItemState extends State<CreateItem> {
         username: currUser.username, 
         credits: currUser.credits, 
         favoriteStores: currUser.favoriteStores,
-        storeId: store.id
+        //storeId: store.id
       );
 
       UserService.updateUser(tempUser);
@@ -187,15 +196,14 @@ class _CreateItemState extends State<CreateItem> {
       context: context, 
       builder: (_) => AlertDialog(
         title: const Text("Whoops!"),
-        content: Text("Missing information..."),
+        content: const Text("Missing information..."),
         actions: [
           TextButton(onPressed: () {
             Navigator.of(context).pop(false);
-          }, child: Text("Ok"))
+          }, child: const Text("Ok"))
         ],
       ),
       barrierDismissible: true
     );
   }
-  */
 }
