@@ -7,22 +7,25 @@ class Credit extends Equatable {
   final String storeId;
   final double amtOff;
   final String storeName;
+  final String coverImageLink;
 
   const Credit({
     required this.id,
     required this.expireDate,
     required this.storeId,
     required this.amtOff,
+    required this.coverImageLink,
     required this.storeName
   });
 
   @override
-  List<Object?> get props => [id, expireDate, storeId];
+  List<Object?> get props => [id, expireDate, storeId, amtOff, coverImageLink, storeName];
 
   Credit.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         expireDate = json['expireDate'],
         storeId = json['storeId'],
+        coverImageLink = json['coverImageLink'],
         amtOff = json['amtOff'],
         storeName = json['storeName'];
 
@@ -30,6 +33,7 @@ class Credit extends Equatable {
     'id': id,
     'expireDate': expireDate,
     'storeId': storeId,
+    'coverImageLink': coverImageLink,
     'amtOff': amtOff,
     'storeName': storeName
   };
@@ -43,6 +47,7 @@ class Credit extends Equatable {
       id: data?['id'],
       expireDate: data?['expireDate'],
       storeId: data?['storeId'],
+      coverImageLink: data?['coverImageLink'],
       amtOff: data?['amtOff'],
       storeName: data?['storeName']
     );
@@ -53,6 +58,7 @@ class Credit extends Equatable {
       if (id != null) "id": id,
       if (expireDate != null) "expireDate": expireDate,
       if (storeId != null) "storeId": storeId,
+      if (coverImageLink != null) "coverImageLink": coverImageLink,
       if (amtOff != null) "amtOff": amtOff,
       if (storeName != null) "storeName": storeName
     };

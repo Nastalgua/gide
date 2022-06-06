@@ -1,54 +1,54 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
-class Item extends Equatable {
+class FavoriteStore extends Equatable {
   final String name;
   final String description;
-  final String imageLink;
+  final String coverImageLink;
   final String storeId;
 
-  const Item({
+  const FavoriteStore({
     required this.name,
     required this.description,
-    required this.imageLink,
+    required this.coverImageLink,
     required this.storeId
   });
 
   @override
-  List<Object?> get props => [name, description, imageLink, storeId];
+  List<Object?> get props => [name, description, storeId, coverImageLink];
 
-  factory Item.fromFirestore(
+  factory FavoriteStore.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> snapshot,
     SnapshotOptions? options,
   ) {
     final data = snapshot.data();
-    return Item(
+    return FavoriteStore(
       name: data?['name'],
       description: data?['description'],
-      imageLink: data?['imageLink'],
-      storeId: data?['storeId']
+      coverImageLink: data?['coverImageLink'],
+      storeId: data?['storeId'],
     );
   }
 
   Map<String, dynamic> toFirestore() {
     return {
-      if (name != null) "id": name,
+      if (name != null) "name": name,
       if (description != null) "description": description,
-      if (imageLink != null) "expireDate": imageLink,
-      if (storeId != null) "storeId": storeId
+      if (coverImageLink != null) "coverImageLink": coverImageLink,
+      if (storeId != null) "storeId": storeId,
     };
   }
 
-  Item.fromJson(Map<String, dynamic> json)
+  FavoriteStore.fromJson(Map<String, dynamic> json)
       : name = json['name'],
         description = json['description'],
-        imageLink = json['imageLink'],
+        coverImageLink = json['coverImageLink'],
         storeId = json['storeId'];
 
   Map<String, dynamic> toJson() => {
     'name': name,
     'description': description,
-    'imageLink': imageLink,
-    'storeId': storeId
+    'coverImageLink': coverImageLink,
+    'storeId': storeId,
   };
 }

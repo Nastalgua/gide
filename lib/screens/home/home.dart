@@ -27,10 +27,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _currentIndex = 3;
+  int _currentIndex = 0;
 
-  final PageController _pageController = PageController(initialPage: 3);
-  final Color _activeColor = Colors.pink;
+  final PageController _pageController = PageController(initialPage: 0);
+  final Color _activeColor = const Color(0xFF4670C1);
   final Color _disableColor = Colors.black45;
 
   @override

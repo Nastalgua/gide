@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -204,7 +205,8 @@ class _CreateStoreState extends State<CreateStore> {
         coverImageLink: imageDownloadLink,
         location: geo.point(latitude: lat!, longitude: lng!),
         announcements: const [],
-        items: const []
+        items: const [],
+        lastModified: Timestamp.now()
       );
 
       StoreSerice.updateStore(store);
@@ -215,7 +217,8 @@ class _CreateStoreState extends State<CreateStore> {
         username: currUser.username, 
         credits: currUser.credits, 
         favoriteStores: currUser.favoriteStores,
-        storeId: store.id
+        storeId: store.id,
+        lastModified: Timestamp.now()
       );
 
       UserService.updateUser(tempUser);

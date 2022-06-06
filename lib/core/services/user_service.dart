@@ -9,9 +9,9 @@ class UserService {
   // Assumes user is logged in
   static CollectionReference stores = FirebaseFirestore.instance.collection('users');
 
-  static void updateUser(self_module.User changedUser) async {
+  static Future<bool> updateUser(self_module.User changedUser) async {
     User? user = AuthenticationService.getCurrentUser();
-    if (user == null) return; // should put an error message here
+    if (user == null) return false; // should put an error message here
 
     await stores.doc(user.uid)
       .withConverter(
@@ -19,5 +19,7 @@ class UserService {
         toFirestore: (self_module.User tempUser, options) => tempUser.toFirestore()
       )
       .set(changedUser);
+    
+    return true;
   }
 }

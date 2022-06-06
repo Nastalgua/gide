@@ -1,10 +1,32 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gide/core/models/favorite_store_model.dart';
+import 'package:gide/core/models/store_model.dart';
+import 'package:gide/core/models/user_model.dart';
+import 'package:gide/core/services/auth_service.dart';
+import 'package:gide/core/services/store_service.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class FavoritesPage extends StatelessWidget{
+class FavoritesPage extends StatefulWidget{
   const FavoritesPage({Key? key}) : super(key: key);
 
+  @override
+  State<FavoritesPage> createState() => _FavoritesPageState();
+}
+
+class _FavoritesPageState extends State<FavoritesPage> {
+  var _userStream;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _userStream = FirebaseFirestore.instance.collection("users").doc(AuthenticationService.userInfo!.id).snapshots();
+  }
+
+  @override
   Widget build(BuildContext context){
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
@@ -15,7 +37,7 @@ class FavoritesPage extends StatelessWidget{
         child: Center(
           child: SizedBox(
             height: height,
-            width: width * 0.8,
+            width: width * 0.85,
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -32,26 +54,24 @@ class FavoritesPage extends StatelessWidget{
 
   Widget favoriteText(double height, double width){
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8),
-      child: const Align(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Align(
           alignment: Alignment.centerLeft,
           child: Text(
             'Favorites',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
-              fontFamily: 'Poppins'
+            style: GoogleFonts.poppins(
+              fontSize: 24,
+              fontWeight: FontWeight.w800
             )
           ),
       ),
     );
   }
 
-  Widget favoriteTab(String name, String desc, double height, double width){
+  Widget favoriteTab(String name, String desc, String imageLink, double height, double width){
     return 
       ElevatedButton(
         onPressed: () {
-          print("wrok");
         },
         style: ElevatedButton.styleFrom(
           elevation: 0,
@@ -75,11 +95,11 @@ class FavoritesPage extends StatelessWidget{
                 Container(
                   height: height * .11,
                   width: height * 0.11,
-                  margin: EdgeInsets.only(right: 20),
+                  margin: const EdgeInsets.only(right: 20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(11),
-                    image: const DecorationImage(
-                      image:  AssetImage('assets/images/noodles.png'),
+                    image: DecorationImage(
+                      image: NetworkImage(imageLink),
                       fit: BoxFit.cover
                     )
                   ),
@@ -91,10 +111,10 @@ class FavoritesPage extends StatelessWidget{
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Align(
+                          Align(
                             alignment: Alignment.centerLeft,
-                            child: const Text(
-                              "TEST",
+                            child: Text(
+                              name,
                               style: const TextStyle(
                                 fontWeight: FontWeight.w800,
                                 fontSize: 13,
@@ -102,10 +122,10 @@ class FavoritesPage extends StatelessWidget{
                               )
                             ),
                           ),
-                          const Align(
+                          Align(
                             alignment: Alignment.centerLeft,
-                            child: const Text(
-                              "All of our menu items are inspired by _____ cuisine and have been created by our head chef, (CN), after studying authentic _____ cuisine in ____. Not only do we have fresh flown-in seafood from the northeast, but we also have a variety of handcrafted cocktails, wine, and beer to choose from.",
+                            child: Text(
+                              desc,
                               style: const TextStyle(
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xFF838383),
@@ -121,22 +141,21 @@ class FavoritesPage extends StatelessWidget{
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                              const Text(
-                                'Learn More ',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Color(0xFF4670C1),
-                                  fontFamily: 'Poppins'
-                                  )
-                              ),
-                              SvgPicture.asset(
-                                'assets/icons/Arrow 1.svg',
-                                height: height * .01,
-                                width: width * .01
-                              )
-                                  
-                            ],
-                                                ),
+                                const Text(
+                                  'Learn More ',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: Color(0xFF4670C1),
+                                    fontFamily: 'Poppins'
+                                    )
+                                ),
+                                SvgPicture.asset(
+                                  'assets/icons/Arrow 1.svg',
+                                  height: height * .01,
+                                  width: width * .01
+                                )
+                              ],
+                            ),
                           )
                                     
                         ],
@@ -160,14 +179,58 @@ class FavoritesPage extends StatelessWidget{
           onNotification: (OverscrollIndicatorNotification overScroll) {
             return false;
           },
-          child: ScrollConfiguration(
-            behavior: MyBehavior(),
-            child: ListView.separated(
-              itemCount: 10,
-              itemBuilder: (context, index) => favoriteTab("TEST", "TEST", height, width),
-              separatorBuilder: (context, index) => SizedBox(height: height * .01875),
-            ),
-          )
+          child: AuthenticationService.userInfo != null ? StreamBuilder<Object>(
+            stream: _userStream,
+            builder: (context, snapshot) {
+
+              if (snapshot.hasError) {
+                return const Text('Something went wrong');
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Text("Loading");
+              }
+              
+              User user = User.fromFirestore(snapshot.data as DocumentSnapshot<Map<String, dynamic>>, null);
+
+              List<FavoriteStore> favoriteStoresReversed = user.favoriteStores!.reversed.toList();
+
+              return favoriteStoresReversed.isNotEmpty ? ScrollConfiguration(
+                behavior: MyBehavior(),
+                child: ListView.separated(
+                  itemCount: favoriteStoresReversed.length,
+                  itemBuilder: (context, index) {
+                    FavoriteStore store = favoriteStoresReversed[index];
+                    
+                    return favoriteTab(
+                      store.name, 
+                      store.description,
+                      store.coverImageLink,
+                      height, 
+                      width
+                    );
+                  },
+                  separatorBuilder: (context, index) => SizedBox(height: height * .01875),
+                ),
+              ) : Container(
+                margin: const EdgeInsets.only(top: 80),
+                child: Column(
+                  children: [
+                    SvgPicture.asset('assets/icons/empty-box.svg'),
+                    Container(
+                      margin: EdgeInsets.only(top: 10),
+                      child: Text(
+                        "There is nothing here...", 
+                        style: GoogleFonts.poppins(
+                          fontSize: 15, color: Color(0xFFC0C0C0)
+                        )
+                      )
+                    )
+                  ],
+                )
+              );
+            }
+          ) : Container()
         )
       )
     );

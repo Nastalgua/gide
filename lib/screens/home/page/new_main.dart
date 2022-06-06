@@ -1,20 +1,67 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:gide/widgets/navbar.dart';
+import 'package:gide/core/constants/route_constants.dart';
+import 'package:gide/core/models/announcement_model.dart';
+import 'package:gide/core/models/item_model.dart';
+import 'package:gide/core/models/store_model.dart';
+import 'package:gide/core/services/store_service.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class MainPage extends StatefulWidget{
 
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage>{
-  String _searchText = "";
+class _MainPageState extends State<MainPage> {
 
-  void initState(){
+  String _searchText = "";
+  final yourScrollController = ScrollController();
+
+  List<Item> _items = [];
+  List<Announcement> _announcements = [];
+
+  void initState() {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((_){
-      
+      _getStuff();
+    });
+  }
+
+  _getStuff() async {
+    var snapshot = await FirebaseFirestore.instance.collection('stores').orderBy("lastModified").get();
+    snapshot.docs.forEach((doc) {
+      Store store = Store.fromFirestore(doc, null);
+      int counter = 0;
+
+      if (store.items!.isNotEmpty) {
+        for (int i = store.items!.length - 1; i >= 0; i--) {
+          if (counter < 3) {
+            setState(() {
+              _items = [..._items, store.items![i]];
+            });
+            
+            counter++;
+          }
+        }
+      }
+
+      counter = 0;
+
+      if (store.announcements!.isNotEmpty) {
+        for (int i = store.announcements!.length - 1; i >= 0; i--) {
+          if (counter < 3) {
+            setState(() {
+              _announcements = [..._announcements, store.announcements![i]];
+            });
+            
+            counter++;
+          }
+        }
+      }
+
+      counter = 0;
+
     });
   }
 
@@ -25,16 +72,16 @@ class _MainPageState extends State<MainPage>{
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Material(
+        color:const Color(0xFFF6F6F6),
         child: SafeArea(
           child: Center(
             child: Container(
               width: width * .844,
-              
                 child: SingleChildScrollView(
                   child: Column(
                     //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildFavStorePromotion(context),
+                      _buildFavStoreItems(context),
                       _buildAnnouncements(context)
                     ],
                   ),
@@ -77,7 +124,7 @@ class _MainPageState extends State<MainPage>{
     );
   }
 
-  Widget _buildFavStorePromotion(BuildContext context){
+  Widget _buildFavStoreItems(BuildContext context){
     ScrollController sc = ScrollController(initialScrollOffset: 50);
    
     double height = MediaQuery.of(context).size.height;
@@ -89,44 +136,73 @@ class _MainPageState extends State<MainPage>{
           Align(
             alignment: Alignment.centerLeft,
             child: Container(
-              child: const Text('Favorite Store Promotions')
+              child: Text(
+                'Favorite Store Items',
+                style: GoogleFonts.poppins(
+                  fontSize: 19
+                ),
+              )
             ),
           ),
           SizedBox(height: height * .01),
           Expanded(
-            child: Center(
-              child: NotificationListener<OverscrollIndicatorNotification>(
-                onNotification: (OverscrollIndicatorNotification overScroll) {
-                  return false;
-                },
-                child: ScrollConfiguration(
-                behavior: MyBehavior(),
-                child: Theme(
-                  data: Theme.of(context).copyWith(
-                    scrollbarTheme: ScrollbarThemeData(
-                      thumbColor: MaterialStateProperty.all(Color(0xFF505050)),
-                      trackVisibility: MaterialStateProperty.all(true),
-                      trackColor: MaterialStateProperty.all(Color(0xFFE8E8E8)),
-                      radius: Radius.circular(20),
-                      thickness: MaterialStateProperty.all(height * .00875)
-                    )
-                  ),
-                  child: Scrollbar(
-                    isAlwaysShown: true,
-                    controller: sc,
+            child: NotificationListener<OverscrollIndicatorNotification>(
+              onNotification: (OverscrollIndicatorNotification overScroll) {
+                return false;
+              },
+              child: ScrollConfiguration(
+              behavior: MyBehavior(),
+              child: Theme(
+                data: Theme.of(context).copyWith(
+                  scrollbarTheme: ScrollbarThemeData(
+                    thumbColor: MaterialStateProperty.all(Color(0xFF505050)),
+                    trackVisibility: MaterialStateProperty.all(true),
+                    trackColor: MaterialStateProperty.all(Color(0xFFE8E8E8)),
+                    radius: Radius.circular(20),
+                    thickness: MaterialStateProperty.all(height * .00875)
+                  )
+                ),
+                child: Scrollbar(
+                  isAlwaysShown: false,
+                  controller: ScrollController(initialScrollOffset: 0),
+                  child: _items.isNotEmpty ? Align(
+                    alignment: Alignment.centerLeft,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       shrinkWrap: true,
-                      controller: sc,
-                      physics: ScrollPhysics(),
-                      itemCount: 10,
-                      itemBuilder: (context, index) => _buildPromotionTab(context, 29, 'never lol', 'noods', 'food'),
+                      itemCount: _items.length,
+                      itemBuilder: (context, index) {
+                        return _buildPromotionTab(
+                          context, 
+                          'never lol', 
+                          _items[index].name, 
+                          _items[index].description, 
+                          _items[index].imageLink,
+                          _items[index].storeId
+                        );
+                      },
                       separatorBuilder: (context, index) => SizedBox(width: height * .01875),
                     ),
-                  ),
+                  ) : Container(
+                      margin: const EdgeInsets.only(top: 40),
+                      child: Column(
+                        children: [
+                          SvgPicture.asset('assets/icons/empty-box.svg'),
+                          Container(
+                            margin: const EdgeInsets.only(top: 10),
+                            child: Text(
+                              "There is nothing here...", 
+                              style: GoogleFonts.poppins(
+                                fontSize: 15, color: const Color(0xFFC0C0C0)
+                              )
+                            )
+                          )
+                        ],
+                      )
+                    ),
                 ),
-              )
-              )
+              ),
+            )
             ),
           )
         ],
@@ -134,11 +210,15 @@ class _MainPageState extends State<MainPage>{
     );
   }
 
-  Widget _buildPromotionTab(BuildContext context, int discount, String discountEnd, String name, String type){
+  Widget _buildPromotionTab(BuildContext context, String discountEnd, String name, String type, String coverImageLink, String storeId){
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+
     return GestureDetector(
-      onTap: () => {},
+      onTap: () async {
+        Store store = await StoreSerice.findStoreById(storeId);
+        Navigator.of(context).pushNamed(storeRoute, arguments: store);
+      },
       child: Center(
         child: Column(
           children: [
@@ -162,42 +242,19 @@ class _MainPageState extends State<MainPage>{
                             children: [
                               Center(
                                 child: Container(
-                                      height: height * .15125,
-                                      width: width * .27125,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(11),
-                                        child: Image.asset(
-                                              'assets/images/noodles.png',
-                                              fit: BoxFit.fill
-                                            ),
-                                      )
-                                        
-                                ),
-                              ),
-                              Positioned(
-                                left: 20,
-                                top: 10,
-                                child: Container(
-                                  width: width * .0578,
-                                  height: height * .0175,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(3),
-                                    color: const Color(0xFFFFFFFF)
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "-${discount}%",
-                                      style: const TextStyle(
-                                        fontSize: 8,
-                                        color: Color(0xFF4670C1)
-                                      )
+                                  height: height * .15125,
+                                  width: width * .27125,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(11),
+                                    child: Image.network(
+                                      coverImageLink,
+                                      fit: BoxFit.fill
                                     ),
-                                  )
+                                  )    
                                 ),
                               ),
-                              
                             ],
-                          )
+                        )
                         ),
 
                         Center(
@@ -230,23 +287,16 @@ class _MainPageState extends State<MainPage>{
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      discountEnd,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w300,
-                                        color: Color(0xFF4670C1),
-                                        fontSize: 11.5
-    
-                                      )
-                                    ),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
                                       children: [
                                         const Text(
-                                          'Let\s Go ',
+                                          'Check it out ',
                                           style: TextStyle(
-                                            fontSize: 11.5,
-                                    
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w300,
+                                            color: Color(0xFF4670C1),
                                             fontFamily: 'Poppins'
                                             )
                                         ),
@@ -254,12 +304,11 @@ class _MainPageState extends State<MainPage>{
                                           'assets/icons/Arrow 1.svg',
                                           height: height * .01,
                                           width: width * .01,
-                                          color: Colors.black,
+                                          color: Color(0xFF4670C1),
                                         )
                                             
                                       ],
                                     ),
-                                    
                                   ],
                                 ),
                               ],
@@ -292,7 +341,12 @@ class _MainPageState extends State<MainPage>{
           Align(
             alignment: Alignment.centerLeft,
             child: Container(
-              child: const Text('Announcements')
+              child: Text(
+                'Announcements',
+                style: GoogleFonts.poppins(
+                  fontSize: 19
+                ),
+              )
             ),
           ),
           SizedBox(height: height * .013),
@@ -300,37 +354,38 @@ class _MainPageState extends State<MainPage>{
             child: Center(
               child: NotificationListener<OverscrollIndicatorNotification>(
                 onNotification: (OverscrollIndicatorNotification overScroll) {
-                  overScroll.disallowGlow();
                   return false;
                 },
-                
-                child: ScrollConfiguration(
-                behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-                child: Scrollbar(
-                  isAlwaysShown: false,
-                  thickness: 0,
-                  child: ListView.separated(
-                    scrollDirection: Axis.vertical,
-                        
-                    itemCount: 10,
-                    itemBuilder: (context, index) => _buildAnnouncementTab(context),
-                    separatorBuilder: (context, index) => SizedBox(height: height * .03375),
-                  ),
-                ),
+                child: ListView.separated(
+                  scrollDirection: Axis.vertical,
+                  itemCount: _announcements.length,
+                  itemBuilder: (context, index) {
+                    return _buildAnnouncementTab(
+                      context, 
+                      _announcements[index].storeName, 
+                      _announcements[index].text, 
+                      _items[index].imageLink,
+                      _items[index].storeId
+                    );
+                  },
+                  separatorBuilder: (context, index) => SizedBox(height: height * .03375),
+                ) 
               )
-              )
-            ),
+            )
           )
         ],
       ),
     );
   }
 
-  Widget _buildAnnouncementTab(BuildContext context){
+  Widget _buildAnnouncementTab(BuildContext context, String name, String description, String coverImageLink, String storeId){
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return GestureDetector(
-      onTap: () => {},
+      onTap: () async {
+        Store store = await StoreSerice.findStoreById(storeId);
+        Navigator.of(context).pushNamed(storeRoute, arguments: store);
+      },
       child: Container(
         decoration: BoxDecoration(
           color: const Color(0xFFFFFFFF),
@@ -352,44 +407,47 @@ class _MainPageState extends State<MainPage>{
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'TEST',
-                          style: TextStyle(
+                          name,
+                          style: const TextStyle(
+                            fontSize: 16,
                             fontWeight: FontWeight.w900
                           )
                         ),
                       ),
-                      //desc
                       Flexible(
-                        child: Text(
-                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                          style: TextStyle(
-                            fontSize: 11
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            description,
+                            style: const TextStyle(
+                              fontSize: 14
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 3,
+                            softWrap: false,
                           ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 3,
-                          softWrap: false,
                         ),
                       ),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'TEST',
-                          style: TextStyle(
+                          name,
+                          style: const TextStyle(
                             color: Color(0xFF4670C1),
-                            fontSize: 11
+                            fontSize: 12
                           )
                         ),
                       )
                     ],
                   ),
                 ),
-                Container(
+                SizedBox(
                   height: height* .11125,
                   width: height * .11125,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(11),
-                    child: Image.asset(
-                      'assets/images/noodles.png',
+                    child: Image.network(
+                      coverImageLink,
                       fit: BoxFit.fill
                     ),
                   )

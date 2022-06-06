@@ -40,7 +40,7 @@ class _CreditsPageState extends State<CreditsPage> {
           child: Center(
             child: SizedBox(
               height: height,
-              width: width * .844,
+              width: width * .85,
               child: Column(
                 children: [
                   Align(
@@ -77,13 +77,8 @@ class _CreditsPageState extends State<CreditsPage> {
                             itemBuilder: (context, index) { 
                               Credit credit = creditsReversed[index];
                               DateTime expiredDate = credit.expireDate.toDate();
-                              return creditTab(
-                                credit.storeName,
-                                (credit.amtOff * 10.0).toInt(),
-                                "${expiredDate.month}/${expiredDate.day}/${expiredDate.year}",
-                                height,
-                                width
-                              );
+
+                              return GetCredit(key: Key(credit.id), name: credit.storeName, percent: (credit.amtOff * 10.0).toInt(), date: "${expiredDate.month}/${expiredDate.day}/${expiredDate.year}", coverImageLink: credit.coverImageLink);
                             },
                             separatorBuilder: (context, index) => const SizedBox(height: 10),
                             itemCount: creditsReversed.length
@@ -116,22 +111,39 @@ class _CreditsPageState extends State<CreditsPage> {
       ),
     );
   }
+}
 
-  Widget creditTab(String name, int percent, String date, double height, double width) {
+class GetCredit extends StatefulWidget {
+  final String name;
+  final int percent;
+  final String date;
+  final String coverImageLink;
+
+  const GetCredit({ Key? key, required this.name, required this.percent, required this.date, required this.coverImageLink }) : super(key: key);
+
+  @override
+  State<GetCredit> createState() => _GetCreditState();
+}
+
+class _GetCreditState extends State<GetCredit> {
+
+  @override
+  Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+
     return ElevatedButton(
       onPressed: () {
         Navigator.of(context).pushNamed(qrCodeResultRoute);
       },
       style: ElevatedButton.styleFrom(
-        elevation: 0,
-        shadowColor: Colors.black,
+        shadowColor: Color.fromARGB(104, 175, 175, 175),
+        elevation: 2,
         primary: const Color(0xFFFFFFFF),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20)
         ),
       ),
       child: Container(
-        height: 100,
         width: width,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
@@ -139,127 +151,75 @@ class _CreditsPageState extends State<CreditsPage> {
         ),
         child: Row(
           children: [
-            Container(
-              
+            SizedBox(
+              width: 110,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        height: width * .2,
+                        width: width * .2,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          image: DecorationImage(
+                            image: NetworkImage(widget.coverImageLink),
+                            fit: BoxFit.cover
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 10),
+                      child: Text(
+                        widget.name, 
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.poppins(
+                          color: Colors.black, 
+                          fontSize: 12
+                        )
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            const DottedLine(
+              lineLength: 100,
+              direction: Axis.vertical,
+              dashLength: 3,
+              dashColor: Colors.grey,
+              dashGapLength: 3,
+            ),
+            SizedBox(
+              width: 80,
+              child: Column(
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        color: Colors.black
+                      ),
+                      children: [
+                        TextSpan(text: '-${widget.percent}% ', style: const TextStyle(
+                            color: Color(0xFF4670C1),
+                            fontWeight: FontWeight.w700
+                          )
+                        ),
+                        const TextSpan(text: "off", style: TextStyle(fontSize: 14))
+                      ]
+                    )
+                  ),
+                  Text(widget.date, style: GoogleFonts.poppins(fontSize: 12, color: const Color(0xFF7E7E7E)))
+                ],
+              ),
             )
           ]
         )
       ),
     );
   }
-
-  /*
-  Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      height: width * .15,
-                      width: width * .15,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/noodles.png'),
-                          fit: BoxFit.cover
-                        ),
-                      ),
-                    ),
-                    Text(
-                      name,
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w300,
-                        color: Colors.black
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
-                      softWrap: false,
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(width: 10,),
-              const DottedLine(
-                direction: Axis.vertical,
-                dashLength: 3,
-                dashColor: Colors.grey,
-                dashGapLength: 3,
-              ),
-              const SizedBox(width: 10,),
-              Flexible(
-                child: SizedBox(
-                  height: height * 0.23,
-                  width: width * 0.50,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: '$percent% ',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.blue
-                                ),
-                              ),
-                              TextSpan(
-                                text: 'off',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w400
-                                ),
-                              )
-                            ]
-                          ),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Expires $date',
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: height * 0.05),
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              'Show Credit',
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.blue
-                              ),
-                            ),
-                            SvgPicture.asset(
-                              'assets/icons/Arrow 1.svg',
-                              height: height * 0.01,
-                              width: width * 0.03,
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              )
-            ],
-          ),
-        ),
-        */
 }

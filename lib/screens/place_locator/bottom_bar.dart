@@ -63,6 +63,7 @@ class _BottomBarState extends State<BottomBar> {
             id: const Uuid().v4(), 
             expireDate: Timestamp.fromDate(DateTime(2022, 6, 2)), 
             storeId: store.id, 
+            coverImageLink: store.coverImageLink,
             amtOff: randomdouble,
             storeName: store.name
           );
@@ -74,7 +75,14 @@ class _BottomBarState extends State<BottomBar> {
 
           credits.add(credit);
 
-          User tempUser = User(id: AuthenticationService.userInfo!.id, username: AuthenticationService.userInfo!.username, credits: credits, favoriteStores: AuthenticationService.userInfo!.favoriteStores);
+          User tempUser = User(
+            id: AuthenticationService.userInfo!.id, 
+            username: AuthenticationService.userInfo!.username, 
+            credits: credits, 
+            storeId: AuthenticationService.userInfo!.storeId,
+            favoriteStores: AuthenticationService.userInfo!.favoriteStores,
+            lastModified: Timestamp.now()
+          );
 
           UserService.updateUser(tempUser);
 

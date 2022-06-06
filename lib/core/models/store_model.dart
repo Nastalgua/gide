@@ -13,6 +13,7 @@ class Store extends Equatable {
   final GeoFirePoint location;
   final List<Announcement>? announcements;
   final List<Item>? items;
+  final Timestamp lastModified;
 
   Store({
     required this.id,
@@ -22,7 +23,8 @@ class Store extends Equatable {
     required this.coverImageLink,
     required this.location,
     required this.announcements,
-    required this.items
+    required this.items,
+    required this.lastModified
   });
 
   @override
@@ -56,9 +58,8 @@ class Store extends Equatable {
       ownerId: data?['ownerId'],
       coverImageLink: data?['coverImageLink'],
       announcements: data?['announcements'] is Iterable ? announcementConverted : null,
-      items: data?['items'] is Iterable ? itemsConverted : null
-      // regions:
-      //     data?['regions'] is Iterable ? List.from(data?['regions']) : null,
+      items: data?['items'] is Iterable ? itemsConverted : null,
+      lastModified: data?['lastModified']
     );
   }
 
@@ -81,7 +82,8 @@ class Store extends Equatable {
       if (ownerId != null) "ownerId": ownerId,
       if (coverImageLink != null) "coverImageLink": coverImageLink,
       if (announcements != null) "announcements": announcementConverted,
-      if (items != null) "items": itemsConverted
+      if (items != null) "items": itemsConverted,
+      if (lastModified != null) "lastModified": lastModified
     };
   }
 }

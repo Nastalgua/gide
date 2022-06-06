@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gide/core/services/auth_service.dart';
 import 'package:gide/screens/auth/bloc/auth_bloc.dart';
 import 'package:gide/screens/auth/page/login_page.dart';
 import 'package:gide/screens/home/home.dart';
@@ -25,7 +26,10 @@ class _BaseState extends State<Base> {
         } else if (snapshot.hasError) {
           return const Center(child: Text("Something went wrong..."));
         } else if (snapshot.hasData) {
-          context.read<AuthBloc>().add(LoadAuth());
+          if (AuthenticationService.userInfo == null) {
+            context.read<AuthBloc>().add(LoadAuth());
+          }
+
           return const Home();
         }
         

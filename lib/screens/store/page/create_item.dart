@@ -15,7 +15,8 @@ import 'package:uuid/uuid.dart';
 import 'dart:io';
 
 class CreateItem extends StatefulWidget {
-  const CreateItem({ Key? key }) : super(key: key);
+  final Store store;
+  const CreateItem({ Key? key, required this.store }) : super(key: key);
 
   @override
   State<CreateItem> createState() => _CreateItemState();
@@ -157,13 +158,19 @@ class _CreateItemState extends State<CreateItem> {
 
       final imageDownloadLink = await storage.downloadURL(fileName!);
 
+      List<Item> items = widget.store.items != null ? [...widget.store.items!] : [];
+
       Item item = Item(
         name: name,
         description: description,
-        imageLink: imageDownloadLink
+        imageLink: imageDownloadLink,
+        storeId: widget.store.id
       );
 
-      /*Store tempStore = Store(
+      items.add(item);
+      widget.store.items!.add(item);
+
+      Store tempStore = Store(
           id: widget.store.id,
           name: widget.store.name,
           description: widget.store.description,
@@ -171,21 +178,11 @@ class _CreateItemState extends State<CreateItem> {
           coverImageLink: widget.store.coverImageLink,
           location: widget.store.location,
           announcements: widget.store.announcements,
-          items: item
-      );*/
-
-      //StoreSerice.updateStore(tempStore); todo: <-- error right here
-
-      User currUser = AuthenticationService.userInfo!;
-      User tempUser = User(
-        id: currUser.id, 
-        username: currUser.username, 
-        credits: currUser.credits, 
-        favoriteStores: currUser.favoriteStores,
-        //storeId: store.id
+          items: items,
+          lastModified: Timestamp.now()
       );
 
-      UserService.updateUser(tempUser);
+      StoreSerice.updateStore(tempStore); 
 
       Navigator.of(context).pop();
 

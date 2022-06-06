@@ -33,7 +33,8 @@ class AuthenticationService {
         username: response.user!.displayName!, 
         storeId: null,
         credits: const [],
-        favoriteStores: const []
+        favoriteStores: const [],
+        lastModified: Timestamp.now()
       );
 
       UserService.updateUser(user);
@@ -57,7 +58,8 @@ class AuthenticationService {
       username: username,
       storeId: null,
       credits: const [],
-      favoriteStores: const []
+      favoriteStores: const [],
+      lastModified: Timestamp.now()
     );
     
     UserService.updateUser(user);

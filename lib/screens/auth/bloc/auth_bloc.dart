@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gide/core/models/user_model.dart' as self_module;
@@ -35,7 +36,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         id: res.uid,
         username: res.displayName ?? "",
         credits: const [],
-        favoriteStores: const []
+        favoriteStores: const [],
+        lastModified: Timestamp.now()
       );
       
       emit(AuthConfirmed(user: user));
@@ -51,7 +53,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         id: res.uid,
         username: res.displayName ?? "",
         credits: const [],
-        favoriteStores: const []
+        favoriteStores: const [],
+        lastModified: Timestamp.now()
       );
 
       emit(AuthConfirmed(user: user));
@@ -68,7 +71,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         id: res.uid, 
         username: res.displayName!, // TODO: this needs to change
         credits: const [],
-        favoriteStores: const []
+        favoriteStores: const [],
+        lastModified: Timestamp.now()
       );
 
       emit(AuthConfirmed(user: user));

@@ -13,6 +13,7 @@ import 'package:gide/screens/auth/page/sign_up_page.dart';
 import 'package:gide/screens/home/page/favorites.dart';
 import 'package:gide/screens/home/page/profile.dart';
 import 'package:gide/screens/home/page/new_main.dart';
+import 'package:gide/screens/store/page/create_item.dart';
 import 'package:gide/screens/store/page/create_store.dart';
 import 'package:gide/screens/store/page/store_page.dart';
 
@@ -43,6 +44,11 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const CreateStore());
       case mainRoute:
         return MaterialPageRoute(builder: (_) => MainPage());
+      case createItemRoute:
+        final store = settings.arguments as Store;
+        return MaterialPageRoute(builder: (_) => CreateItem(
+          store: store,
+        ));
       case qrCodeResultRoute:
         return MaterialPageRoute(builder: (_) => const QRCodeResultPage());
       default:

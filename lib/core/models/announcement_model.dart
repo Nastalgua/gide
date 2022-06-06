@@ -4,12 +4,16 @@ import 'package:equatable/equatable.dart';
 class Announcement extends Equatable {
   final String text;
   final Timestamp timestamp;
+  final String storeName;
   final String storeId;
+  final String coverImageLink;
 
   const Announcement({
     required this.text,
     required this.timestamp,
-    required this.storeId
+    required this.storeId,
+    required this.storeName,
+    required this.coverImageLink
   });
 
   @override
@@ -24,6 +28,8 @@ class Announcement extends Equatable {
       text: data?['text'],
       timestamp: data?['timestamp'],
       storeId: data?['storeId'],
+      storeName: data?['storeName'],
+      coverImageLink: data?['coverImageLink']
     );
   }
 
@@ -32,17 +38,23 @@ class Announcement extends Equatable {
       if (text != null) "text": text,
       if (timestamp != null) "timestamp": timestamp,
       if (storeId != null) "storeId": storeId,
+      if (storeName != null) "storeName": storeName,
+      if (coverImageLink != null) "coverImageLink": coverImageLink
     };
   }
 
   Announcement.fromJson(Map<String, dynamic> json)
       : text = json['text'],
         timestamp = json['timestamp'],
-        storeId = json['storeId'];
+        storeId = json['storeId'],
+        storeName = json['storeName'],
+        coverImageLink = json['coverImageLink'];
 
   Map<String, dynamic> toJson() => {
     'text': text,
     'timestamp': timestamp,
     'storeId': storeId,
+    'storeName': storeName,
+    'coverImageLink': coverImageLink
   };
 }

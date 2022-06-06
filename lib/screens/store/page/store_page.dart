@@ -1,11 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gide/core/constants/route_constants.dart';
 import 'package:gide/core/models/announcement_model.dart';
+import 'package:gide/core/models/favorite_store_model.dart';
 import 'package:gide/core/models/item_model.dart';
 import 'package:gide/core/models/store_model.dart';
+import 'package:gide/core/models/user_model.dart';
 import 'package:gide/core/services/auth_service.dart';
 import 'package:gide/core/services/store_service.dart';
+import 'package:gide/core/services/user_service.dart';
 import 'package:gide/screens/home/page/favorites.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -21,6 +25,7 @@ class StorePage extends StatefulWidget {
 
 class _StorePageState extends State<StorePage> with TickerProviderStateMixin {
   var _storeStream;
+  bool _isFavorite = false;
 
   bool isOwner() {
     return widget.store.ownerId == AuthenticationService.getCurrentUser()!.uid;
@@ -31,6 +36,18 @@ class _StorePageState extends State<StorePage> with TickerProviderStateMixin {
     // TODO: implement initState
     super.initState();
     _storeStream = FirebaseFirestore.instance.collection('stores').doc(widget.store.id).snapshots();
+
+    _isFavorite = _isFavorited();
+  }
+
+  bool _isFavorited() {
+    return AuthenticationService.userInfo != null && AuthenticationService.userInfo!.favoriteStores != null && AuthenticationService.userInfo!.favoriteStores!.contains(widget.store.id);
+  }
+
+  void _favorite() {
+    setState(() {
+      _isFavorite = !_isFavorite;
+    });
   }
 
   @override
@@ -62,11 +79,41 @@ class _StorePageState extends State<StorePage> with TickerProviderStateMixin {
                   child: IconButton(
                     splashColor: Colors.transparent,  
                     highlightColor: Colors.transparent,
-                    onPressed: () {
-                      // TODO: ADD here
+                    onPressed: () async {
+                      if (AuthenticationService.userInfo == null && AuthenticationService.userInfo!.favoriteStores == null) return;
+                      List<FavoriteStore> favoriteStores = AuthenticationService.userInfo != null ? [...AuthenticationService.userInfo!.favoriteStores!] : [];
+
+                      FavoriteStore currFavoriteStore = FavoriteStore(
+                        name: widget.store.name, 
+                        description: widget.store.description, 
+                        coverImageLink: widget.store.coverImageLink, 
+                        storeId: widget.store.id
+                      );
+
+                      if (favoriteStores.contains(currFavoriteStore)) {
+                        favoriteStores.remove(currFavoriteStore);
+                      } else {
+                        favoriteStores.add(currFavoriteStore);
+                      }
+                      
+                      User tempUser = User(
+                        id: AuthenticationService.userInfo!.id, 
+                        username: AuthenticationService.userInfo!.username, 
+                        credits: AuthenticationService.userInfo!.credits,
+                        storeId: AuthenticationService.userInfo!.storeId, 
+                        favoriteStores: favoriteStores,
+                        lastModified: widget.store.lastModified
+                      );
+
+                      await UserService.updateUser(tempUser);
+                      AuthenticationService.userInfo = tempUser;
+
+                      _favorite();
+                      
+                      // favoriteStores.clear();
                     }, 
-                    icon: const Icon( // TODO: Add change here
-                      Icons.favorite_border, 
+                    icon: Icon( // TODO: Add change here
+                      _isFavorite ? Icons.favorite : Icons.favorite_border, 
                       color: Colors.pink,
                       size: 24.0, 
                     )
@@ -289,10 +336,13 @@ class _AnnouncementTabState extends State<_AnnouncementTab> with AutomaticKeepAl
                 Announcement announcement = Announcement(
                   text: _announcement, 
                   timestamp: Timestamp.now(), 
-                  storeId: widget.store.id
+                  storeId: widget.store.id,
+                  storeName: widget.store.name,
+                  coverImageLink: widget.store.coverImageLink
                 );
 
                 announcements.add(announcement);
+                widget.store.announcements!.add(announcement);
                 
                 Store tempStore = Store(
                   id: widget.store.id, 
@@ -302,12 +352,12 @@ class _AnnouncementTabState extends State<_AnnouncementTab> with AutomaticKeepAl
                   coverImageLink: widget.store.coverImageLink,
                   location: widget.store.location, 
                   announcements: announcements, 
-                  items: widget.store.items
+                  items: widget.store.items,
+                  lastModified: Timestamp.now()
                 );
 
                 StoreSerice.updateStore(tempStore);
 
-                announcements.clear();
                 fieldText.clear();
                 setState(() {
                   _announcement = "";
@@ -392,55 +442,61 @@ class _ItemsTabState extends State<_ItemsTab> {
     return Column(
       children: [
         widget.isOwner ? createItemButton() : Container(),
-        StreamBuilder<Object>(
-          stream: _storeStream,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Text('Something went wrong');
-            }
-            
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Text("Loading");
-            }
-
-            Store store = Store.fromFirestore(snapshot.data as DocumentSnapshot<Map<String, dynamic>>, null);
-            List<Item> itemsReversed = store.items!.reversed.toList();
-
-            return itemsReversed.isNotEmpty ? ScrollConfiguration(
-              behavior: MyBehavior(),
-              child: ListView.separated(
-                shrinkWrap: true,
-                padding: EdgeInsets.zero,
-                itemBuilder: (context, index) {
-                  return itemTab(//todo: item name & description from firebase
-                    itemsReversed[index].name,
-                    itemsReversed[index].description,
-                    itemsReversed[index].imageLink,
-                    MediaQuery.of(context).size.height,
-                    MediaQuery.of(context).size.width//todo: add a way to pass img src
-                  );
-                },
-                separatorBuilder: (context, index) => const SizedBox(height: 10),
-                itemCount: itemsReversed.length
-              ),
-            ) : Container(
-              margin: const EdgeInsets.only(top: 100),
-              child: Column(
-                children: [
-                  SvgPicture.asset('assets/icons/empty-box.svg'),
-                  Container(
-                    margin: EdgeInsets.only(top: 10),
-                    child: Text(
-                      "There is nothing here...", 
-                      style: GoogleFonts.poppins(
-                        fontSize: 15, color: Color(0xFFC0C0C0)
+        Padding(
+          padding: const EdgeInsets.only(top: 12.0),
+          child: StreamBuilder<Object>(
+            stream: _storeStream,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Text('Something went wrong');
+              }
+              
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Text("Loading");
+              }
+    
+              Store store = Store.fromFirestore(snapshot.data as DocumentSnapshot<Map<String, dynamic>>, null);
+              List<Item> itemsReversed = store.items!.reversed.toList();
+    
+              return itemsReversed.isNotEmpty ? ScrollConfiguration(
+                behavior: MyBehavior(),
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.449,
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.zero,
+                    itemBuilder: (context, index) {
+                      return itemTab(//todo: item name & description from firebase
+                        itemsReversed[index].name,
+                        itemsReversed[index].description,
+                        itemsReversed[index].imageLink,
+                        MediaQuery.of(context).size.height,
+                        MediaQuery.of(context).size.width//todo: add a way to pass img src
+                      );
+                    },
+                    separatorBuilder: (context, index) => const SizedBox(height: 10),
+                    itemCount: itemsReversed.length
+                  ),
+                ),
+              ) : Container(
+                margin: const EdgeInsets.only(top: 100),
+                child: Column(
+                  children: [
+                    SvgPicture.asset('assets/icons/empty-box.svg'),
+                    Container(
+                      margin: EdgeInsets.only(top: 10),
+                      child: Text(
+                        "There is nothing here...", 
+                        style: GoogleFonts.poppins(
+                          fontSize: 15, color: Color(0xFFC0C0C0)
+                        )
                       )
                     )
-                  )
-                ],
-              )
-            );
-          }
+                  ],
+                )
+              );
+            }
+          ),
         ),
       ],
     );
@@ -453,7 +509,7 @@ class _ItemsTabState extends State<_ItemsTab> {
         backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
       ),
       onPressed: () {
-
+        Navigator.of(context).pushNamed(createItemRoute, arguments: widget.store);
       }, 
       child: Container(
         decoration: BoxDecoration(
