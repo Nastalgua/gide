@@ -25,7 +25,7 @@ class StorePage extends StatefulWidget {
 
 class _StorePageState extends State<StorePage> with TickerProviderStateMixin {
   var _storeStream;
-  bool _isFavorite = false;
+  bool _isFavorite = true;
 
   bool isOwner() {
     return widget.store.ownerId == AuthenticationService.getCurrentUser()!.uid;
@@ -41,13 +41,21 @@ class _StorePageState extends State<StorePage> with TickerProviderStateMixin {
   }
 
   bool _isFavorited() {
-    return AuthenticationService.userInfo != null && AuthenticationService.userInfo!.favoriteStores != null && AuthenticationService.userInfo!.favoriteStores!.contains(widget.store.id);
+    // print(AuthenticationService.userInfo != null);
+    // print(AuthenticationService.userInfo!.favoriteStores != null);
+    print(AuthenticationService.userInfo!.favoriteStores!);
+
+    FavoriteStore tempFavoriteStore = FavoriteStore(name: widget.store.name, description: widget.store.description, coverImageLink: widget.store.coverImageLink, storeId: widget.store.id);
+
+    return AuthenticationService.userInfo != null && AuthenticationService.userInfo!.favoriteStores != null && AuthenticationService.userInfo!.favoriteStores!.contains(tempFavoriteStore);
   }
 
   void _favorite() {
     setState(() {
-      _isFavorite = !_isFavorite;
+      // _isFavorite = !_isFavorite;
+      _isFavorite = _isFavorited();
     });
+
   }
 
   @override
@@ -92,8 +100,10 @@ class _StorePageState extends State<StorePage> with TickerProviderStateMixin {
 
                       if (favoriteStores.contains(currFavoriteStore)) {
                         favoriteStores.remove(currFavoriteStore);
+                        AuthenticationService.userInfo!.favoriteStores!.remove(currFavoriteStore);
                       } else {
                         favoriteStores.add(currFavoriteStore);
+                        AuthenticationService.userInfo!.favoriteStores!.add(currFavoriteStore);
                       }
                       
                       User tempUser = User(
@@ -113,9 +123,9 @@ class _StorePageState extends State<StorePage> with TickerProviderStateMixin {
                       // favoriteStores.clear();
                     }, 
                     icon: Icon( // TODO: Add change here
-                      _isFavorite ? Icons.favorite : Icons.favorite_border, 
+                      _isFavorite ? Icons.favorite : Icons.favorite_border,
                       color: Colors.pink,
-                      size: 24.0, 
+                      size: 24.0,
                     )
                   ),
                 ),
