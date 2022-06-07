@@ -266,6 +266,8 @@ class _MainPageState extends State<MainPage> {
                                   alignment: Alignment.centerLeft,
                                   child: Text(
                                     name,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.w900,
                                       fontSize: 14.5
@@ -275,7 +277,9 @@ class _MainPageState extends State<MainPage> {
                                 Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    type,
+                                    "sdaweqweqiweuiqwuqnmkd qjw dd weq weqw eq d sasjqw ",
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 2,
                                     style: const TextStyle(
                                         fontWeight: FontWeight.w300,
                                         color: Color(0xFF838383),
@@ -284,32 +288,36 @@ class _MainPageState extends State<MainPage> {
                                   ),
                                 ),
                                 SizedBox(height: height * .0175),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                      children: [
-                                        const Text(
-                                          'Check it out ',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w300,
+                                Align(
+                                  alignment: Alignment.bottomLeft,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          const Text(
+                                            'Check it out ',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w300,
+                                              color: Color(0xFF4670C1),
+                                              fontFamily: 'Poppins'
+                                              )
+                                          ),
+                                          SvgPicture.asset(
+                                            'assets/icons/Arrow 1.svg',
+                                            height: height * .01,
+                                            width: width * .01,
                                             color: Color(0xFF4670C1),
-                                            fontFamily: 'Poppins'
-                                            )
-                                        ),
-                                        SvgPicture.asset(
-                                          'assets/icons/Arrow 1.svg',
-                                          height: height * .01,
-                                          width: width * .01,
-                                          color: Color(0xFF4670C1),
-                                        )
-                                            
-                                      ],
-                                    ),
-                                  ],
+                                          )
+                                              
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),

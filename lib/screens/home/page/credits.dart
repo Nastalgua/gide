@@ -43,13 +43,16 @@ class _CreditsPageState extends State<CreditsPage> {
               width: width * .85,
               child: Column(
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Credits',
-                      style: GoogleFonts.poppins(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w800
+                  Container(
+                    margin: const EdgeInsets.only(top: 40),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Credits',
+                        style: GoogleFonts.poppins(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800
+                        ),
                       ),
                     ),
                   ),
@@ -78,7 +81,7 @@ class _CreditsPageState extends State<CreditsPage> {
                               Credit credit = creditsReversed[index];
                               DateTime expiredDate = credit.expireDate.toDate();
 
-                              return GetCredit(key: Key(credit.id), name: credit.storeName, percent: (credit.amtOff * 10.0).toInt(), date: "${expiredDate.month}/${expiredDate.day}/${expiredDate.year}", coverImageLink: credit.coverImageLink);
+                              return GetCredit(key: Key(credit.id), name: credit.storeName, percent: (credit.amtOff * 100).toInt(), date: "${expiredDate.month}/${expiredDate.day}/${expiredDate.year}", coverImageLink: credit.coverImageLink, credit: credit);
                             },
                             separatorBuilder: (context, index) => const SizedBox(height: 10),
                             itemCount: creditsReversed.length
@@ -118,8 +121,9 @@ class GetCredit extends StatefulWidget {
   final int percent;
   final String date;
   final String coverImageLink;
+  final Credit credit;
 
-  const GetCredit({ Key? key, required this.name, required this.percent, required this.date, required this.coverImageLink }) : super(key: key);
+  const GetCredit({ Key? key, required this.name, required this.percent, required this.date, required this.coverImageLink, required this.credit }) : super(key: key);
 
   @override
   State<GetCredit> createState() => _GetCreditState();
@@ -133,10 +137,10 @@ class _GetCreditState extends State<GetCredit> {
 
     return ElevatedButton(
       onPressed: () {
-        Navigator.of(context).pushNamed(qrCodeResultRoute);
+        Navigator.of(context).pushNamed(qrCodeResultRoute, arguments: widget.credit);
       },
       style: ElevatedButton.styleFrom(
-        shadowColor: Color.fromARGB(104, 175, 175, 175),
+        shadowColor: const Color(0x68AFAFAF),
         elevation: 2,
         primary: const Color(0xFFFFFFFF),
         shape: RoundedRectangleBorder(

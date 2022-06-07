@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:gide/core/base.dart';
 
 import 'package:gide/core/constants/route_constants.dart';
+import 'package:gide/core/models/credit_model.dart';
 import 'package:gide/core/models/store_model.dart';
+import 'package:gide/screens/home/page/credit_confirm.dart';
 import 'package:gide/screens/home/page/qr_code_result.dart';
+import 'package:gide/screens/home/page/qr_code_scan.dart';
 
 // UIs
 import 'package:gide/screens/place_locator/place_locator.dart';
@@ -50,7 +53,21 @@ class RouteGenerator {
           store: store,
         ));
       case qrCodeResultRoute:
-        return MaterialPageRoute(builder: (_) => const QRCodeResultPage());
+        final credit = settings.arguments as Credit;
+        return MaterialPageRoute(
+          builder: (_) => QRCodeResultPage(
+            credit: credit,
+          )
+        );
+      case qrCodeScannerRoute:
+        return MaterialPageRoute(builder: (_) => const QRCodeScanner());
+      case qrCodeConfirmationRoute:
+        final credit = settings.arguments as Credit;
+        return MaterialPageRoute(
+          builder: (_) => CreditConfirm(
+            credit: credit,
+          )
+        );
       default:
         return _errorRoute();
     }

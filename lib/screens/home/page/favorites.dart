@@ -54,7 +54,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
   Widget favoriteText(double height, double width){
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.only(top: 40),
       child: Align(
           alignment: Alignment.centerLeft,
           child: Text(
@@ -74,8 +74,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
         onPressed: () {
         },
         style: ElevatedButton.styleFrom(
-          elevation: 0,
-          shadowColor: Colors.transparent,
+          shadowColor: const Color(0x68AFAFAF),
+          elevation: 2,
           primary: const Color(0xFFFFFFFF),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(11)
@@ -106,59 +106,62 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 ),
                 Flexible(
                   child: SizedBox(
-                      height: height * .09875,
+                      height: height * .9,
                       width: width * .45,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              name,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 13,
-                                color: Colors.black
-                              )
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              desc,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF838383),
-                                fontSize: 9
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 3,
-                              softWrap: false,
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.bottomRight,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                const Text(
-                                  'Learn More ',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: Color(0xFF4670C1),
-                                    fontFamily: 'Poppins'
-                                    )
-                                ),
-                                SvgPicture.asset(
-                                  'assets/icons/Arrow 1.svg',
-                                  height: height * .01,
-                                  width: width * .01
+                      child: Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Column(
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                name,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 16,
+                                  color: Colors.black
                                 )
-                              ],
+                              ),
                             ),
-                          )
-                                    
-                        ],
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Text(
+                                desc,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF838383),
+                                  fontSize: 12
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 3,
+                                softWrap: false,
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.bottomRight,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  const Text(
+                                    'Learn More ',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Color(0xFF4670C1),
+                                      fontFamily: 'Poppins'
+                                      )
+                                  ),
+                                  SvgPicture.asset(
+                                    'assets/icons/Arrow 1.svg',
+                                    height: height * .01,
+                                    width: width * .01
+                                  )
+                                ],
+                              ),
+                            )
+                                      
+                          ],
+                        ),
                       )
                     ),
                   ),
@@ -218,11 +221,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   children: [
                     SvgPicture.asset('assets/icons/empty-box.svg'),
                     Container(
-                      margin: EdgeInsets.only(top: 10),
+                      margin: const EdgeInsets.only(top: 10),
                       child: Text(
                         "There is nothing here...", 
                         style: GoogleFonts.poppins(
-                          fontSize: 15, color: Color(0xFFC0C0C0)
+                          fontSize: 15, color: const Color(0xFFC0C0C0)
                         )
                       )
                     )

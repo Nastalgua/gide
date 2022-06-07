@@ -74,6 +74,7 @@ class _BottomBarState extends State<BottomBar> {
           List<Credit> credits = AuthenticationService.userInfo != null ? [...AuthenticationService.userInfo!.credits!] : [];
 
           credits.add(credit);
+          AuthenticationService.userInfo!.credits!.add(credit);
 
           User tempUser = User(
             id: AuthenticationService.userInfo!.id, 
@@ -86,12 +87,10 @@ class _BottomBarState extends State<BottomBar> {
 
           UserService.updateUser(tempUser);
 
-          credits.clear();
-
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                "Added credit of ${credit.amtOff} for ${store.name}."
+                "Added credit of -${(credit.amtOff * 100).toInt()}% for ${store.name}."
               )
             )
           );

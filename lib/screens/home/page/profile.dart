@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:gide/core/constants/route_constants.dart';
 import 'package:gide/core/models/announcement_model.dart';
+import 'package:gide/core/models/credit_model.dart';
 import 'package:gide/core/models/item_model.dart';
 import 'package:gide/core/models/store_model.dart';
 import 'package:gide/core/services/auth_service.dart';
@@ -92,7 +93,7 @@ class ProfilePage extends StatelessWidget{
                             if (AuthenticationService.userInfo!.storeId == null) {
                               showDialog(context: context, builder: (_) => AlertDialog(
                                 title: const Text("Whoops!"),
-                                content: Text("Missing store. Create one first."),
+                                content: const Text("Missing store. Create one first."),
                                 actions: [
                                   TextButton(onPressed: () {
                                     Navigator.of(context).pop(false);
@@ -223,18 +224,36 @@ class ProfilePage extends StatelessWidget{
               )
             ],
           ),
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 10),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: SvgPicture.asset('assets/icons/profile/qrcode.svg'),
-                ),
-                Text('Scan QR Code', style: GoogleFonts.poppins())
-              ],
-            )
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(qrCodeScannerRoute);
+              // Credit credit = Credit(
+              //   id: "ok", 
+              //   expireDate: Timestamp.now(), 
+              //   storeId: "swqeqw", 
+              //   amtOff: 0.1, coverImageLink: "", storeName: "time"
+              // );
+
+              // Navigator.of(context).pushNamed(qrCodeConfirmationRoute, arguments: credit);
+            },
+            style: ButtonStyle(
+              overlayColor: MaterialStateProperty.all<Color>(Color(0x1FE0E0E0)),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+              elevation: MaterialStateProperty.all<double>(0),
+            ),
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: SvgPicture.asset('assets/icons/profile/qrcode.svg'),
+                  ),
+                  Text('Scan QR Code', style: GoogleFonts.poppins(color: Colors.black))
+                ],
+              )
+            ),
           ),
           const Divider(
             height: 1,

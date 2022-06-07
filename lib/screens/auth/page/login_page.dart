@@ -21,6 +21,7 @@ class _LoginPageState extends State<LoginPage> {
     double width = MediaQuery.of(context).size.width;
 
     return Material(
+      color: const Color(0xFFF6F6F6),
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthConfirmed) {
@@ -50,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget buildText(double height, double width) {
     return Column(children: [
       Padding(
-          padding: EdgeInsets.only(top: height * 0.06),
+          padding: EdgeInsets.only(top: height * 0.08),
           child: const Text('Welcome Back!', style: TextStyle(fontSize: 27, fontWeight: FontWeight.w800))),
       Padding(
         padding: EdgeInsets.only(top: height * 0.01125),

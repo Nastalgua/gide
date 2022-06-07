@@ -19,6 +19,7 @@ class _SignUpPageState extends State<SignUpPage> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     return Material(
+      color: const Color(0xFFF6F6F6),
       child: BlocListener<AuthBloc, AuthState>(
         listener: ((context, state) {
             if (state is AuthConfirmed) {
@@ -54,7 +55,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.only(top: height * 0.02),
+          padding: EdgeInsets.only(top: height * 0.04),
           child: const Text(
             'Hello!',
             style: TextStyle(
