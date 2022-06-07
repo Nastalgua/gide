@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:gide/core/constants/route_constants.dart';
 import 'package:gide/core/models/favorite_store_model.dart';
 import 'package:gide/core/models/store_model.dart';
 import 'package:gide/core/models/user_model.dart';
@@ -68,10 +69,12 @@ class _FavoritesPageState extends State<FavoritesPage> {
     );
   }
 
-  Widget favoriteTab(String name, String desc, String imageLink, double height, double width){
+  Widget favoriteTab(String name, String desc, String imageLink, FavoriteStore store, double height, double width){
     return 
       ElevatedButton(
-        onPressed: () {
+        onPressed: () async {
+          Store s = await StoreSerice.findStoreById(store.storeId);
+          Navigator.of(context).pushNamed(storeRoute, arguments: s);
         },
         style: ElevatedButton.styleFrom(
           shadowColor: const Color(0x68AFAFAF),
@@ -209,6 +212,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       store.name, 
                       store.description,
                       store.coverImageLink,
+                      store,
                       height, 
                       width
                     );
