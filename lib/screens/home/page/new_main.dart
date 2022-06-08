@@ -277,7 +277,7 @@ class _MainPageState extends State<MainPage> {
                                 Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    "sdaweqweqiweuiqwuqnmkd qjw dd weq weqw eq d sasjqw ",
+                                    type,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 2,
                                     style: const TextStyle(
