@@ -372,8 +372,8 @@ class _MainPageState extends State<MainPage> {
                       context, 
                       _announcements[index].storeName, 
                       _announcements[index].text, 
-                      _items[index].imageLink,
-                      _items[index].storeId
+                      _announcements[index].coverImageLink,
+                      _announcements[index].storeId
                     );
                   },
                   separatorBuilder: (context, index) => SizedBox(height: height * .03375),

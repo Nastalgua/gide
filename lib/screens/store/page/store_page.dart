@@ -239,24 +239,24 @@ class _AnnouncementTabState extends State<_AnnouncementTab> with AutomaticKeepAl
     return Column(
       children: [
         widget.isOwner ? createAnnouncementField(MediaQuery.of(context).size.width) : Container(),
-        StreamBuilder<Object>(
-          stream: widget.storeStream,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Text('Something went wrong');
-            }
-            
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Text("Loading");
-            }
-
-            Store store = Store.fromFirestore(snapshot.data as DocumentSnapshot<Map<String, dynamic>>, null);
-
-            List<Announcement> announcementReversed = store.announcements!.reversed.toList();
-
-            return announcementReversed.isNotEmpty ? ScrollConfiguration(
-              behavior: MyBehavior(),
-              child: Expanded(
+        Expanded(
+          child: StreamBuilder<Object>(
+            stream: widget.storeStream,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Text('Something went wrong');
+              }
+              
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Text("Loading");
+              }
+        
+              Store store = Store.fromFirestore(snapshot.data as DocumentSnapshot<Map<String, dynamic>>, null);
+        
+              List<Announcement> announcementReversed = store.announcements!.reversed.toList();
+        
+              return announcementReversed.isNotEmpty ? ScrollConfiguration(
+                behavior: MyBehavior(),
                 child: ListView.separated(
                   padding: const EdgeInsets.only(top: 20, bottom: 20),
                   shrinkWrap: true,
@@ -271,25 +271,25 @@ class _AnnouncementTabState extends State<_AnnouncementTab> with AutomaticKeepAl
                   },
                   itemCount: announcementReversed.length,
                 ),
-              ),
-            ) : Container(
-              margin: const EdgeInsets.only(top: 80),
-              child: Column(
-                children: [
-                  SvgPicture.asset('assets/icons/empty-box.svg'),
-                  Container(
-                    margin: EdgeInsets.only(top: 10),
-                    child: Text(
-                      "There is nothing here...", 
-                      style: GoogleFonts.poppins(
-                        fontSize: 15, color: Color(0xFFC0C0C0)
+              ) : Container(
+                margin: const EdgeInsets.only(top: 80),
+                child: Column(
+                  children: [
+                    SvgPicture.asset('assets/icons/empty-box.svg'),
+                    Container(
+                      margin: EdgeInsets.only(top: 10),
+                      child: Text(
+                        "There is nothing here...", 
+                        style: GoogleFonts.poppins(
+                          fontSize: 15, color: Color(0xFFC0C0C0)
+                        )
                       )
                     )
-                  )
-                ],
-              )
-            );
-          }
+                  ],
+                )
+              );
+            }
+          ),
         ),
       ],
     );
@@ -452,60 +452,62 @@ class _ItemsTabState extends State<_ItemsTab> {
     return Column(
       children: [
         widget.isOwner ? createItemButton() : Container(),
-        Padding(
-          padding: const EdgeInsets.only(top: 12.0),
-          child: StreamBuilder<Object>(
-            stream: _storeStream,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return const Text('Something went wrong');
-              }
-              
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Text("Loading");
-              }
-    
-              Store store = Store.fromFirestore(snapshot.data as DocumentSnapshot<Map<String, dynamic>>, null);
-              List<Item> itemsReversed = store.items!.reversed.toList();
-    
-              return itemsReversed.isNotEmpty ? ScrollConfiguration(
-                behavior: MyBehavior(),
-                child: Container(
-                  height: MediaQuery.of(context).size.height * 0.449,
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    padding: EdgeInsets.zero,
-                    itemBuilder: (context, index) {
-                      return itemTab(//todo: item name & description from firebase
-                        itemsReversed[index].name,
-                        itemsReversed[index].description,
-                        itemsReversed[index].imageLink,
-                        MediaQuery.of(context).size.height,
-                        MediaQuery.of(context).size.width//todo: add a way to pass img src
-                      );
-                    },
-                    separatorBuilder: (context, index) => const SizedBox(height: 10),
-                    itemCount: itemsReversed.length
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 12.0),
+            child: StreamBuilder<Object>(
+              stream: _storeStream,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Text('Something went wrong');
+                }
+                
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Text("Loading");
+                }
+            
+                Store store = Store.fromFirestore(snapshot.data as DocumentSnapshot<Map<String, dynamic>>, null);
+                List<Item> itemsReversed = store.items!.reversed.toList();
+            
+                return itemsReversed.isNotEmpty ? ScrollConfiguration(
+                  behavior: MyBehavior(),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.449,
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.zero,
+                      itemBuilder: (context, index) {
+                        return itemTab(//todo: item name & description from firebase
+                          itemsReversed[index].name,
+                          itemsReversed[index].description,
+                          itemsReversed[index].imageLink,
+                          MediaQuery.of(context).size.height,
+                          MediaQuery.of(context).size.width//todo: add a way to pass img src
+                        );
+                      },
+                      separatorBuilder: (context, index) => const SizedBox(height: 10),
+                      itemCount: itemsReversed.length
+                    ),
                   ),
-                ),
-              ) : Container(
-                margin: const EdgeInsets.only(top: 100),
-                child: Column(
-                  children: [
-                    SvgPicture.asset('assets/icons/empty-box.svg'),
-                    Container(
-                      margin: EdgeInsets.only(top: 10),
-                      child: Text(
-                        "There is nothing here...", 
-                        style: GoogleFonts.poppins(
-                          fontSize: 15, color: Color(0xFFC0C0C0)
+                ) : Container(
+                  margin: const EdgeInsets.only(top: 100),
+                  child: Column(
+                    children: [
+                      SvgPicture.asset('assets/icons/empty-box.svg'),
+                      Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: Text(
+                          "There is nothing here...", 
+                          style: GoogleFonts.poppins(
+                            fontSize: 15, color: Color(0xFFC0C0C0)
+                          )
                         )
                       )
-                    )
-                  ],
-                )
-              );
-            }
+                    ],
+                  )
+                );
+              }
+            ),
           ),
         ),
       ],

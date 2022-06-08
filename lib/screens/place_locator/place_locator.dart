@@ -61,10 +61,6 @@ class _PlaceLocatorState extends State<PlaceLocator> {
           children: const [
             FilterItem(name: "Interests"),
             FilterItem(name: "Surprise Me!"),
-            FilterItem(name: "Surprise Me!"),
-            FilterItem(name: "Surprise Me!"),
-            FilterItem(name: "Surprise Me!"),
-            FilterItem(name: "Surprise Me!"),
           ],
         ),
       ),
