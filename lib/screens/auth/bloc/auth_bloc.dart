@@ -39,6 +39,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         favoriteStores: const [],
         lastModified: Timestamp.now()
       );
+
+      await AuthenticationService.setUserInfo();
       
       emit(AuthConfirmed(user: user));
     });
@@ -57,6 +59,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         lastModified: Timestamp.now()
       );
 
+      await AuthenticationService.setUserInfo();
+
       emit(AuthConfirmed(user: user));
     });
 
@@ -74,6 +78,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         favoriteStores: const [],
         lastModified: Timestamp.now()
       );
+
+      await AuthenticationService.setUserInfo();
 
       emit(AuthConfirmed(user: user));
     });

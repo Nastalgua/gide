@@ -11,6 +11,8 @@ import 'package:gide/screens/home/page/profile.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gide/screens/auth/bloc/auth_bloc.dart';
+import 'package:gide/screens/store/page/create_store.dart';
+import 'package:gide/screens/store/page/create_item.dart';
 
 enum Page {
   home,
@@ -138,6 +140,7 @@ class _HomeState extends State<Home> {
           MainPage(),
           // GreenScreen(),
           CreditsPage(),
+          //CreateItem(),
           FavoritesPage(),
           ProfilePage(),
           // YellowScreen()
